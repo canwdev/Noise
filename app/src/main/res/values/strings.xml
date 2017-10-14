@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">噪音产生器</string>
+    <string name="about_intro">用怎样的节奏抵制寝室的喧闹</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="activity_about">关于</string>
+    <string name="about_developer">开发者</string>
+    <string name="about_info">信息</string>
+    <string name="about_github">开源</string>
+</resources>
