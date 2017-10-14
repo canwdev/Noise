@@ -46,7 +46,7 @@ public class AboutActivity extends AppCompatActivity {
 
     public void card_goGithub(View view) {
         Intent iGoGithub = new Intent(Intent.ACTION_VIEW);
-        iGoGithub.setData(Uri.parse(""));
+        iGoGithub.setData(Uri.parse("https://github.com/canwdev/Noise"));
         startActivity(iGoGithub);
     }
 

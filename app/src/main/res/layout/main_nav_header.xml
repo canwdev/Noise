@@ -16,8 +16,7 @@
         android:id="@+id/imageView_nav_header"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        app:srcCompat="@drawable/ra2ico" />
 
     <TextView
         android:id="@+id/text_nav_header"
@@ -25,6 +24,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:text="@string/about_intro"
+        android:textColor="@color/colorAccent"
         android:textSize="18sp" />
 
 </LinearLayout>

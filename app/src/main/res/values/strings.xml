@@ -7,4 +7,21 @@
     <string name="about_developer">开发者</string>
     <string name="about_info">信息</string>
     <string name="about_github">开源</string>
+    <string name="settings_edit_text_preference_default_value">默认</string>
+    <string name="settings_edit_text_preference_title">默认</string>
+    <string name="settings_preference_click_to_activity">1</string>
+    <string name="settings_preference_click_title">12123</string>
+    <string name="pref_title_vibrate">12313</string>
+    <string name="pref_title_ringtone">1231</string>
+    <string name="pref_title_new_message_notifications">123123</string>
+    <string name="pref_title_system_sync_settings">1244</string>
+    <string name="settings_multi_select_list_preference_title">123123123</string>
+    <string name="settings_multi_select_list_preference_dialog_title">12123123</string>
+    <string name="settings_list_preference_title">12123123</string>
+    <string name="settings_list_preference_dialog_title">123123</string>
+    <string name="settings_check_box_preference_title">123123123</string>
+    <string name="settings_switch_preference_summary">123123</string>
+    <string name="settings_switch_preference_title">1231232</string>
+    <string name="pref_on_preference_click">121111111</string>
+    <string name="pref_ringtone_silent">123333</string>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="settings_multi_select_list_preference_values">12123</string-array>
+    <string-array name="settings_multi_select_list_preference_titles">12234123</string-array>
+    <string-array name="settings_list_preference_values">123123</string-array>
+    <string-array name="settings_list_preference_titles" />
+</resources>
