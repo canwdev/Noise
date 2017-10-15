@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_reset"
+        android:icon="@drawable/ic_notifications_off_yellow_500_24dp"
+        android:title="停止"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_stop_timer"
+        android:icon="@drawable/ic_timer_yellow_500_24dp"
+        android:title="定时停止"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,8 +1,10 @@
 package com.canwdev.noise;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -11,32 +13,43 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolRandom;
 import com.canwdev.noise.util.SoundPoolUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnLongClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnLongClickListener, View.OnTouchListener {
 
+    private static final String TAG = "Main##";
     SharedPreferences pref;
     private DrawerLayout drawer;
     private SoundPoolUtil spu_drawer;
     private SoundPoolRandom spr_box;
     private SoundPoolRandom spr_boom;
     private SoundPoolRandom spr_gun;
-    private Timer playMore;
+    private Timer endlessPlayTimer;
+    private Timer stopTimer;
     private Button button1;
     private Button button2;
     private Button button3;
-    private Button button4;
+    private ImageButton button4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
-        button4 = (Button) findViewById(R.id.button4);
+        button4 = (ImageButton) findViewById(R.id.button4);
 
         button1.setOnClickListener(this);
         button1.setOnLongClickListener(this);
@@ -105,6 +118,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         button3.setOnClickListener(this);
         button3.setOnLongClickListener(this);
         button4.setOnClickListener(this);
+
+        if (pref.getBoolean(Conf.pEnTouch, false)) {
+            button1.setOnTouchListener(this);
+            button2.setOnTouchListener(this);
+            button3.setOnTouchListener(this);
+        }
     }
 
     @Override
@@ -143,6 +162,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.button1:
+                spr_box.play();
+                break;
+            case R.id.button2:
+                spr_boom.play();
+                break;
+            case R.id.button3:
+                spr_gun.play();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button1:
@@ -155,14 +192,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 spr_gun.play();
                 break;
             case R.id.button4:
-                releaseSoundPool();
-                initSoundPool();
-                if (playMore != null) {
-                    Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
-                    playMore.cancel();
-                    playMore.purge();
-                    playMore = null;
-                }
+
                 break;
             default:
                 break;
@@ -173,19 +203,81 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onLongClick(View v) {
         switch (v.getId()) {
             case R.id.button1:
-                playEndless(spr_box);
+                endlessPlay(spr_box);
                 break;
             case R.id.button2:
-                playEndless(spr_boom);
+                endlessPlay(spr_boom);
                 break;
             case R.id.button3:
-                playEndless(spr_gun);
+                endlessPlay(spr_gun);
                 break;
             case R.id.button4:
 
                 break;
             default:
                 break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_reset:
+                releaseSoundPool();
+                initSoundPool();
+                stopEndlessPlay();
+                break;
+            case R.id.menu_stop_timer:
+                final Calendar calendar = Calendar.getInstance();
+                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+
+                        calendar.set(Calendar.HOUR_OF_DAY, i);
+                        calendar.set(Calendar.MINUTE, i1);
+                        long timer = calendar.getTime().getTime();
+                        Log.d(TAG, "timer: " + timer);
+                        long now = new Date().getTime();
+                        Log.d(TAG, "now--: " + now);
+                        if (now < timer) {
+                            long diff = timer - now;
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+                            String hms = sdf.format(diff);
+
+                            Toast.makeText(MainActivity.this, "将在以下时间后停止: " + hms, Toast.LENGTH_SHORT).show();
+                            stopTimer = new Timer();
+                            stopTimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    releaseSoundPool();
+                                    initSoundPool();
+                                    Looper.prepare();
+                                    stopEndlessPlay();
+                                    Looper.loop();
+                                    /*finish();
+                                    System.exit(0);*/
+                                }
+                            }, diff);
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "选择的时间无效", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                timePickerDialog.show();
+                break;
+            default:
+                break;
+
         }
         return true;
     }
@@ -202,32 +294,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         spr_gun.release();
     }
 
-    private void playEndless(final SoundPoolRandom spr) {
-        /*if (playMore != null) {
-            Toast.makeText(this, spr.getFolderInfo() + " 循环播放停止", Toast.LENGTH_SHORT).show();
-            playMore.cancel();
-            playMore.purge();
-            playMore = null;
-        } else {*/
-            Toast.makeText(this, spr.getFolderInfo() + " 循环播放中", Toast.LENGTH_SHORT).show();
-            long interval = Integer.parseInt(pref.getString(Conf.pAuPlInterval, "500"));
-            playMore = new Timer();
-            playMore.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    spr.play();
-                }
-            }, 0, interval);
+    private void stopEndlessPlay() {
+        if (endlessPlayTimer != null) {
+            Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
+            endlessPlayTimer.cancel();
+            endlessPlayTimer.purge();
+            endlessPlayTimer = null;
+        }
     }
 
-
-
-    /*private final class PlayMoreTask extends TimerTask {
-        @Override
-        public void run() {
-            spr_gun.play();
-            spr_box.play();
-            spr_boom.play();
-        }
-    }*/
+    private void endlessPlay(final SoundPoolRandom spr) {
+        /*if (endlessPlayTimer != null) {
+            Toast.makeText(this, spr.getFolderInfo() + " 循环播放停止", Toast.LENGTH_SHORT).show();
+            endlessPlayTimer.cancel();
+            endlessPlayTimer.purge();
+            endlessPlayTimer = null;
+        } else {*/
+        Toast.makeText(this, spr.getFolderInfo() + " 循环播放中", Toast.LENGTH_SHORT).show();
+        long interval = Integer.parseInt(pref.getString(Conf.pAuPlInterval, "500"));
+        endlessPlayTimer = new Timer();
+        endlessPlayTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                spr.play();
+            }
+        }, 0, interval);
+    }
 }

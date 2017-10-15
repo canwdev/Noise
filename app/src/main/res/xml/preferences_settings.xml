@@ -1,20 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="switch_enable_drawer_ssound"
-        android:summary="模拟红警2菜单滑动（重开生效）"
-        android:title="抽屉音效" />
+    <PreferenceCategory android:title="开关（部分设置重启应用生效）">
 
-    <EditTextPreference
-        android:defaultValue="500"
-        android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
-        android:inputType="numberDecimal"
-        android:key="audio_play_interval"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="循环播放间隔时间（毫秒）" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="switch_enable_drawer_ssound"
+            android:summary="模拟红警2菜单滑动"
+            android:title="抽屉音效" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_enable_button_touch"
+            android:summary="触摸按钮时发出声音"
+            android:title="按钮触摸事件" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="循环设置（毫秒）">
+
+        <EditTextPreference
+            android:defaultValue="500"
+            android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
+            android:inputType="numberDecimal"
+            android:key="audio_play_interval"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="固定播放间隔" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="audio_play_random_interval"
+            android:summary="会有玄学效果，固定间隔将被忽略"
+            android:title="启用随机播放" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="1000"
+            android:dependency="audio_play_random_interval"
+            android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
+            android:inputType="numberDecimal"
+            android:key="edit_text_preference_1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="随机间隔：短时间" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="1000"
+            android:dependency="audio_play_random_interval"
+            android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
+            android:inputType="numberDecimal"
+            android:key="edit_text_preference_1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="随机间隔：长时间" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
