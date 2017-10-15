@@ -12,6 +12,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -24,13 +26,17 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.canwdev.noise.noise.Noise;
+import com.canwdev.noise.noise.NoiseAdapter;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolRandom;
 import com.canwdev.noise.util.SoundPoolUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,12 +50,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SoundPoolRandom spr_box;
     private SoundPoolRandom spr_boom;
     private SoundPoolRandom spr_gun;
+    private SoundPoolRandom spr_base;
     private Timer endlessPlayTimer;
     private Timer stopTimer;
-    private Button button1;
-    private Button button2;
-    private Button button3;
+    // RA2
+    private ImageButton button1;
+    private ImageButton button2;
+    private ImageButton button3;
     private ImageButton button4;
+    //RecyclerView
+    private List<Noise> noiseList = new ArrayList<>();
+
+    private void initNoises(){
+
+        for (int i=0; i<10; i++) {
+            Noise noise = new Noise(R.drawable.gc_umi, new SoundPoolRandom(MainActivity.this, "audio_box", 8));
+            noiseList.add(noise);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +124,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
         initSoundPool();
-        button1 = (Button) findViewById(R.id.button1);
-        button2 = (Button) findViewById(R.id.button2);
-        button3 = (Button) findViewById(R.id.button3);
+
+        initNoises();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        recyclerView.setLayoutManager(layoutManager);
+        NoiseAdapter adapter = new NoiseAdapter(noiseList);
+        recyclerView.setAdapter(adapter);
+
+
+        button1 = (ImageButton) findViewById(R.id.button1);
+        button2 = (ImageButton) findViewById(R.id.button2);
+        button3 = (ImageButton) findViewById(R.id.button3);
         button4 = (ImageButton) findViewById(R.id.button4);
 
         button1.setOnClickListener(this);
@@ -118,11 +145,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         button3.setOnClickListener(this);
         button3.setOnLongClickListener(this);
         button4.setOnClickListener(this);
+        button4.setOnLongClickListener(this);
 
         if (pref.getBoolean(Conf.pEnTouch, false)) {
             button1.setOnTouchListener(this);
             button2.setOnTouchListener(this);
             button3.setOnTouchListener(this);
+            button4.setOnTouchListener(this);
         }
     }
 
@@ -173,6 +202,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.button3:
                 spr_gun.play();
                 break;
+            case R.id.button4:
+                spr_base.play();
+                break;
             default:
                 break;
         }
@@ -192,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 spr_gun.play();
                 break;
             case R.id.button4:
-
+                spr_base.play();
                 break;
             default:
                 break;
@@ -212,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 endlessPlay(spr_gun);
                 break;
             case R.id.button4:
-
+                endlessPlay(spr_base);
                 break;
             default:
                 break;
@@ -286,12 +318,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         spr_box = new SoundPoolRandom(MainActivity.this, "audio_box", 8);
         spr_boom = new SoundPoolRandom(MainActivity.this, "audio_boom", 33);
         spr_gun = new SoundPoolRandom(MainActivity.this, "audio_gun", 11);
+        spr_base = new SoundPoolRandom(MainActivity.this, "audio_base", 10);
     }
 
     private void releaseSoundPool() {
         spr_box.release();
         spr_boom.release();
         spr_gun.release();
+        spr_base.release();
     }
 
     private void stopEndlessPlay() {
@@ -300,6 +334,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             endlessPlayTimer.cancel();
             endlessPlayTimer.purge();
             endlessPlayTimer = null;
+        }
+        for (Noise n : noiseList) {
+            n.getSounds().stopEndlessPlay();
         }
     }
 

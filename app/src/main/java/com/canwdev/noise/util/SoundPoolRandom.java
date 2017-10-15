@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by CAN on 2017/10/14.
@@ -16,7 +19,11 @@ public class SoundPoolRandom {
     private SoundPool sound = null;
     private int maxSoundCount = 0;
     private String folderName;
+    private Timer endlessPlayTimer;
+    private Context mContext;
+
     public SoundPoolRandom(Context context, String folderName, int Max) {
+        mContext = context;
         this.folderName = folderName;
         sound = new SoundPool(Max, AudioManager.STREAM_MUSIC, 5);
         try {
@@ -49,5 +56,25 @@ public class SoundPoolRandom {
         return folderName+"("+maxSoundCount+")";
     }
 
+    public void endlessPlay() {
 
+        Toast.makeText(mContext, getFolderInfo() + " 循环播放中", Toast.LENGTH_SHORT).show();
+        long interval = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAuPlInterval, "500"));
+        endlessPlayTimer = new Timer();
+        endlessPlayTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                play();
+            }
+        }, 0, interval);
+    }
+
+    public void stopEndlessPlay() {
+        if (endlessPlayTimer != null) {
+            Toast.makeText(mContext, "循环播放停止", Toast.LENGTH_SHORT).show();
+            endlessPlayTimer.cancel();
+            endlessPlayTimer.purge();
+            endlessPlayTimer = null;
+        }
+    }
 }

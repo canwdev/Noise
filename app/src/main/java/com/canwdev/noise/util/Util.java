@@ -1,11 +1,15 @@
 package com.canwdev.noise.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.Random;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by CAN on 2017/10/14.
@@ -66,5 +70,15 @@ public class Util {
         }
 
         return sh + ":" + sm + ":" + ss;
+    }
+
+    // 获取默认的 SharedPreferences
+    public static SharedPreferences getDefPref(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    // 获取自定义 SharedPreferences
+    public static SharedPreferences getPref(Context context, String PREF_FILE_NAME) {
+        return context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
     }
 }
