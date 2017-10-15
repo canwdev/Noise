@@ -1,5 +1,6 @@
 package com.canwdev.noise;
 
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,10 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -29,7 +27,7 @@ import android.widget.Toast;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.noise.NoiseAdapter;
 import com.canwdev.noise.util.Conf;
-import com.canwdev.noise.util.SoundPoolRandom;
+import com.canwdev.noise.noise.SoundPoolRandom;
 import com.canwdev.noise.util.SoundPoolUtil;
 
 import java.text.SimpleDateFormat;
@@ -41,32 +39,32 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnLongClickListener, View.OnTouchListener {
+// TODO 写备注
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "Main##";
     SharedPreferences pref;
     private DrawerLayout drawer;
     private SoundPoolUtil spu_drawer;
-    private SoundPoolRandom spr_box;
-    private SoundPoolRandom spr_boom;
-    private SoundPoolRandom spr_gun;
-    private SoundPoolRandom spr_base;
-    private Timer endlessPlayTimer;
     private Timer stopTimer;
-    // RA2
-    private ImageButton button1;
-    private ImageButton button2;
-    private ImageButton button3;
-    private ImageButton button4;
-    //RecyclerView
+
     private List<Noise> noiseList = new ArrayList<>();
 
-    private void initNoises(){
+    private void initNoises() {
+        noiseList.add(new Noise(R.drawable.ra_box, new SoundPoolRandom(this, "audio_box")));
+        noiseList.add(new Noise(R.drawable.ra_boom, new SoundPoolRandom(this, "audio_boom")));
+        noiseList.add(new Noise(R.drawable.ra_gun, new SoundPoolRandom(this, "audio_gun")));
+        noiseList.add(new Noise(R.drawable.ra_allied_base, new SoundPoolRandom(this, "audio_base")));
 
-        for (int i=0; i<10; i++) {
-            Noise noise = new Noise(R.drawable.gc_umi, new SoundPoolRandom(MainActivity.this, "audio_box", 8));
-            noiseList.add(noise);
-        }
+        noiseList.add(new Noise(R.drawable.gc_yuanshou, new SoundPoolRandom(this, "guichu/yuanshou")));
+        noiseList.add(new Noise(R.drawable.gc_gboy, new SoundPoolRandom(this, "guichu/gboy")));
+        noiseList.add(new Noise(R.drawable.gc_shengdiyage, new SoundPoolRandom(this, "guichu/shengdiyage")));
+        noiseList.add(new Noise(R.drawable.gc_liangyifeng, new SoundPoolRandom(this, "guichu/liangyifeng")));
+
+        noiseList.add(new Noise(R.drawable.gc_liangfeifan, new SoundPoolRandom(this, "guichu/liangfeifan")));
+        noiseList.add(new Noise(R.drawable.gc_zhexue, new SoundPoolRandom(this, "guichu/zhexue")));
+        noiseList.add(new Noise(R.drawable.gc_haa, new SoundPoolRandom(this, "guichu/haa")));
+        noiseList.add(new Noise(R.drawable.gc_other, new SoundPoolRandom(this, "guichu/other")));
     }
 
     @Override
@@ -118,14 +116,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nav_header.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: BGM
             }
         });
 
-
         spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
-        initSoundPool();
 
-        initNoises();
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         recyclerView.setLayoutManager(layoutManager);
@@ -133,26 +130,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapter);
 
 
-        button1 = (ImageButton) findViewById(R.id.button1);
-        button2 = (ImageButton) findViewById(R.id.button2);
-        button3 = (ImageButton) findViewById(R.id.button3);
-        button4 = (ImageButton) findViewById(R.id.button4);
-
-        button1.setOnClickListener(this);
-        button1.setOnLongClickListener(this);
-        button2.setOnClickListener(this);
-        button2.setOnLongClickListener(this);
-        button3.setOnClickListener(this);
-        button3.setOnLongClickListener(this);
-        button4.setOnClickListener(this);
-        button4.setOnLongClickListener(this);
-
-        if (pref.getBoolean(Conf.pEnTouch, false)) {
-            button1.setOnTouchListener(this);
-            button2.setOnTouchListener(this);
-            button3.setOnTouchListener(this);
-            button4.setOnTouchListener(this);
-        }
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("烧酒祈祷中...");
+        dialog.setCancelable(false);
+        dialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initNoises();
+                dialog.dismiss();
+            }
+        }).start();
     }
 
     @Override
@@ -165,6 +153,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_settings:
                 intent.setClass(this, SettingsActivity.class);
                 startActivity(intent);
+                break;
+
+            case R.id.nav_fc:
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setMessage("烧酒祈祷中...");
+                dialog.setCancelable(false);
+                dialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (Noise n : noiseList) {
+                            n.getSounds().stop();
+                            n.getSounds().release();
+                            n.getSounds().stopEndlessPlay();
+                        }
+                        noiseList.clear();
+                        initNoises();
+                        dialog.dismiss();
+                    }
+                }).start();
+                // System.exit(0);
                 break;
 
             case R.id.nav_about:
@@ -191,68 +200,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId()) {
-            case R.id.button1:
-                spr_box.play();
-                break;
-            case R.id.button2:
-                spr_boom.play();
-                break;
-            case R.id.button3:
-                spr_gun.play();
-                break;
-            case R.id.button4:
-                spr_base.play();
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button1:
-                spr_box.play();
-                break;
-            case R.id.button2:
-                spr_boom.play();
-                break;
-            case R.id.button3:
-                spr_gun.play();
-                break;
-            case R.id.button4:
-                spr_base.play();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.button1:
-                endlessPlay(spr_box);
-                break;
-            case R.id.button2:
-                endlessPlay(spr_boom);
-                break;
-            case R.id.button3:
-                endlessPlay(spr_gun);
-                break;
-            case R.id.button4:
-                endlessPlay(spr_base);
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
@@ -263,9 +210,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_reset:
-                releaseSoundPool();
-                initSoundPool();
-                stopEndlessPlay();
+                Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
+                for (Noise n : noiseList) {
+                    n.getSounds().stop();
+                    n.getSounds().stopEndlessPlay();
+                }
                 break;
             case R.id.menu_stop_timer:
                 final Calendar calendar = Calendar.getInstance();
@@ -290,15 +239,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             stopTimer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    releaseSoundPool();
-                                    initSoundPool();
+                                    for (Noise n : noiseList) {
+                                        n.getSounds().stop();
+                                        n.getSounds().stopEndlessPlay();
+                                    }
                                     Looper.prepare();
-                                    stopEndlessPlay();
+                                    Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                     /*finish();
                                     System.exit(0);*/
                                 }
-                            }, diff);
+                            }, diff); //diff秒后启动一次
 
                         } else {
                             Toast.makeText(MainActivity.this, "选择的时间无效", Toast.LENGTH_SHORT).show();
@@ -314,47 +265,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void initSoundPool() {
-        spr_box = new SoundPoolRandom(MainActivity.this, "audio_box", 8);
-        spr_boom = new SoundPoolRandom(MainActivity.this, "audio_boom", 33);
-        spr_gun = new SoundPoolRandom(MainActivity.this, "audio_gun", 11);
-        spr_base = new SoundPoolRandom(MainActivity.this, "audio_base", 10);
-    }
 
-    private void releaseSoundPool() {
-        spr_box.release();
-        spr_boom.release();
-        spr_gun.release();
-        spr_base.release();
-    }
-
-    private void stopEndlessPlay() {
-        if (endlessPlayTimer != null) {
-            Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
-            endlessPlayTimer.cancel();
-            endlessPlayTimer.purge();
-            endlessPlayTimer = null;
-        }
-        for (Noise n : noiseList) {
-            n.getSounds().stopEndlessPlay();
-        }
-    }
-
-    private void endlessPlay(final SoundPoolRandom spr) {
-        /*if (endlessPlayTimer != null) {
-            Toast.makeText(this, spr.getFolderInfo() + " 循环播放停止", Toast.LENGTH_SHORT).show();
-            endlessPlayTimer.cancel();
-            endlessPlayTimer.purge();
-            endlessPlayTimer = null;
-        } else {*/
-        Toast.makeText(this, spr.getFolderInfo() + " 循环播放中", Toast.LENGTH_SHORT).show();
-        long interval = Integer.parseInt(pref.getString(Conf.pAuPlInterval, "500"));
-        endlessPlayTimer = new Timer();
-        endlessPlayTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                spr.play();
-            }
-        }, 0, interval);
-    }
 }

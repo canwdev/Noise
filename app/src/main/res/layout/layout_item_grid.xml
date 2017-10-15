@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="5dp"
+    android:layout_margin="@dimen/def_margin_micro"
     android:gravity="center"
     android:orientation="vertical"
     android:weightSum="1">
@@ -14,10 +14,9 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/def_margin_micro"
         android:foreground="?android:attr/selectableItemBackground"
         android:padding="0dp"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/gc_mrs_sao" />
+        app:srcCompat="@drawable/gc_haa" />
 
 </LinearLayout>

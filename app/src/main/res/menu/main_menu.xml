@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/menu_random_guichu"
+        android:icon="@drawable/ic_shuffle_yellow_500_24dp"
+        android:title="随机鬼畜"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_reset"
         android:icon="@drawable/ic_notifications_off_yellow_500_24dp"

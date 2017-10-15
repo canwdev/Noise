@@ -27,76 +27,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="110dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/button1"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="@dimen/def_margin_micro"
-                    android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:padding="0dp"
-                    android:scaleType="centerCrop"
-                    android:text="箱子"
-                    app:srcCompat="@drawable/ra_box" />
-
-                <ImageButton
-                    android:id="@+id/button2"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="@dimen/def_margin_micro"
-                    android:layout_toEndOf="@+id/button1"
-                    android:layout_toRightOf="@+id/button1"
-                    android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:padding="0dp"
-                    android:scaleType="centerCrop"
-                    android:text="爆炸"
-                    app:srcCompat="@drawable/ra_boom" />
-
-                <ImageButton
-                    android:id="@+id/button3"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="@dimen/def_margin_micro"
-                    android:layout_toRightOf="@+id/button2"
-                    android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ra_gun" />
-
-                <ImageButton
-                    android:id="@+id/button4"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="@dimen/def_margin_micro"
-                    android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:padding="0dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/ra_allied_base" />
-            </LinearLayout>
-
-        </RelativeLayout>
-    </ScrollView>
+        android:layout_weight="1"
+        android:padding="@dimen/def_padding_small" />
 
 </LinearLayout>

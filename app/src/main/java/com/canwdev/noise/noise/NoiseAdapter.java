@@ -1,21 +1,17 @@
 package com.canwdev.noise.noise;
 
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
-import com.canwdev.noise.util.SoundPoolRandom;
 import com.canwdev.noise.util.Util;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by CAN on 2017/10/15.
@@ -63,12 +59,22 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
             public boolean onLongClick(View v) {
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
-
                 noise.getSounds().endlessPlay();
                 return true;
             }
         });
 
+        if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnTouch, false)) {
+            holder.view.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int position = holder.getAdapterPosition();
+                    Noise noise = mNoiseList.get(position);
+                    noise.getSounds().play();
+                    return true;
+                }
+            });
+        }
         return holder;
     }
 

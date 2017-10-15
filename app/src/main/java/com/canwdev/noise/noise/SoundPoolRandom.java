@@ -1,10 +1,14 @@
-package com.canwdev.noise.util;
+package com.canwdev.noise.noise;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.canwdev.noise.util.Conf;
+import com.canwdev.noise.util.Util;
 
 import java.io.IOException;
 import java.util.Random;
@@ -16,21 +20,23 @@ import java.util.TimerTask;
  */
 
 public class SoundPoolRandom {
+    private static final String TAG = "SPR##";
     private SoundPool sound = null;
     private int maxSoundCount = 0;
     private String folderName;
-    private Timer endlessPlayTimer;
+    private Timer endlessPlayTimer = null;
     private Context mContext;
 
-    public SoundPoolRandom(Context context, String folderName, int Max) {
+    public SoundPoolRandom(Context context, String folderName) {
         mContext = context;
         this.folderName = folderName;
-        sound = new SoundPool(Max, AudioManager.STREAM_MUSIC, 5);
         try {
-            String randAudio = "";
-            AssetFileDescriptor descriptor = null;
             String[] audios = context.getResources().getAssets().list(folderName);
             maxSoundCount = audios.length;
+            sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 5);
+
+            String randAudio = "";
+            AssetFileDescriptor descriptor = null;
             for (int i = 0; i < maxSoundCount; i++) {
                 descriptor = context.getResources().getAssets().openFd(folderName + "/" + audios[i]);
                 sound.load(descriptor, 1);
@@ -43,23 +49,41 @@ public class SoundPoolRandom {
 
     public void play() {
         Random r = new Random();
-        int id = r.nextInt(maxSoundCount);
+        int id = r.nextInt(maxSoundCount+1);
         if (id == 0) id = 1;
         sound.play(id, 1, 1, 0, 0, 1);
     }
 
-    public void release(){
+    public void release() {
         sound.release();
     }
 
+    public void stop() {
+        for (int i = 1; i <= maxSoundCount; i++) {
+            sound.stop(i);
+        }
+    }
+
     public String getFolderInfo() {
-        return folderName+"("+maxSoundCount+")";
+        return folderName + "(" + maxSoundCount + ")";
     }
 
     public void endlessPlay() {
 
+        if (endlessPlayTimer == null) {
+            directDndlessPlay();
+        } else if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnLoop, false)) {
+            directDndlessPlay();
+        } else {
+            Toast.makeText(mContext, getFolderInfo() + " 不允许重复循环播放，请到设置修改", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void directDndlessPlay() {
         Toast.makeText(mContext, getFolderInfo() + " 循环播放中", Toast.LENGTH_SHORT).show();
         long interval = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAuPlInterval, "500"));
+
         endlessPlayTimer = new Timer();
         endlessPlayTimer.schedule(new TimerTask() {
             @Override
@@ -71,7 +95,6 @@ public class SoundPoolRandom {
 
     public void stopEndlessPlay() {
         if (endlessPlayTimer != null) {
-            Toast.makeText(mContext, "循环播放停止", Toast.LENGTH_SHORT).show();
             endlessPlayTimer.cancel();
             endlessPlayTimer.purge();
             endlessPlayTimer = null;
