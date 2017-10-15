@@ -1,6 +1,6 @@
 # Noise · 噪音产生器
 
-<img src="./app/src/main/ic_launcher-web.png" width="30%"/>
+<img src="./app/src/main/ic_launcher-web.png" width="100px"/>
 
 用怎样的节奏抵制寝室的喧闹
 
