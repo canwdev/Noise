@@ -12,11 +12,12 @@ import java.util.Random;
  * Created by CAN on 2017/10/14.
  */
 
-public class PlayAssetsRandom {
+public class SoundPoolRandom {
     private SoundPool sound = null;
     private int maxSoundCount = 0;
-
-    public PlayAssetsRandom(Context context, String folderName, int Max) {
+    private String folderName;
+    public SoundPoolRandom(Context context, String folderName, int Max) {
+        this.folderName = folderName;
         sound = new SoundPool(Max, AudioManager.STREAM_MUSIC, 5);
         try {
             String randAudio = "";
@@ -43,4 +44,10 @@ public class PlayAssetsRandom {
     public void release(){
         sound.release();
     }
+
+    public String getFolderInfo() {
+        return folderName+"("+maxSoundCount+")";
+    }
+
+
 }
