@@ -28,6 +28,7 @@ public class Noise {
     }
 
     public void load(Context context) {
+        // TODO: 2017/10/24 第一次初始化不发声 ，线程问题
         if (!loaded) {
             sounds = new SoundPoolRandom(context, folderName);
             loaded = true;

@@ -6,7 +6,7 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="switch_enable_drawer_ssound"
-            android:summary="模拟红警2菜单滑动"
+            android:summary="红警2菜单滑动音效"
             android:title="抽屉音效" />
         <SwitchPreference
             android:defaultValue="false"
@@ -14,13 +14,13 @@
             android:summary="触摸按钮时发出声音"
             android:title="按钮触摸事件" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="循环设置（毫秒）">
+    <PreferenceCategory android:title="循环设置（长按可循环播放）">
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="check_box_enable_loop_play"
-            android:summary="重复循环播放同一项目将无法正常停止"
-            android:title="允许重复循环播放" />
+            android:summary="禁忌 · 多重存在"
+            android:title="允许重复" />
         <EditTextPreference
             android:defaultValue="1500"
             android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
@@ -29,7 +29,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="固定播放间隔" />
+            android:title="固定播放间隔（毫秒）" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="audio_play_random_interval"

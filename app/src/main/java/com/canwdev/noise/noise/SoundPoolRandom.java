@@ -47,6 +47,7 @@ public class SoundPoolRandom {
     }
 
     public void play() {
+        // TODO: 2017/10/24 需要更好的随机方法
         Random r = new Random();
         int id = r.nextInt(maxSoundCount + 1);
         if (id == 0) id = 1;

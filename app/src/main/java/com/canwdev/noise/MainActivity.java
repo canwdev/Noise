@@ -1,7 +1,6 @@
 package com.canwdev.noise;
 
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.canwdev.noise.noise.Noise;
@@ -31,8 +29,6 @@ import com.canwdev.noise.util.SoundPoolUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -40,7 +36,7 @@ import java.util.TimerTask;
 
 // TODO 写备注
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+    private static final int INTENT_STOP_TIME = 1;
     private static final String TAG = "Main##";
     SharedPreferences pref;
     private DrawerLayout drawer;
@@ -50,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Noise> noiseList = new ArrayList<>();
 
     private void initNoises() {
+        // TODO: 2017/10/24 从 assets 加载图片与文字
         noiseList.add(new Noise(R.drawable.ic_shuffle_yellow_500_24dp, "inst/piano"));
 
         noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
@@ -132,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("烧酒祈祷中...");
+        dialog.setMessage(getString(R.string.loading));
         dialog.setCancelable(false);
         dialog.show();
         new Thread((Runnable) () -> {
@@ -155,8 +152,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_reset:
+                // TODO: 2017/10/24 播放多个条目后其他条目点击不能播放的奇怪问题
                 final ProgressDialog dialog = new ProgressDialog(this);
-                dialog.setMessage("烧酒祈祷中...");
+                dialog.setMessage(getString(R.string.loading));
                 dialog.setCancelable(false);
                 dialog.show();
                 new Thread(new Runnable() {
@@ -185,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
-
         return true;
     }
 
@@ -209,6 +206,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_random_play:
+                // TODO: 2017/10/24 随机播放一段时间，同样使用SetTimeActivity
+                break;
             case R.id.menu_reset:
                 Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
                 for (Noise n : noiseList) {
@@ -216,45 +216,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             case R.id.menu_stop_timer:
-                final Calendar calendar = Calendar.getInstance();
-                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                Intent intent = new Intent(MainActivity.this, SetTimeActivity.class);
+                startActivityForResult(intent, INTENT_STOP_TIME);
 
-                        calendar.set(Calendar.HOUR_OF_DAY, i);
-                        calendar.set(Calendar.MINUTE, i1);
-                        long timer = calendar.getTime().getTime();
-                        Log.d(TAG, "timer: " + timer);
-                        long now = new Date().getTime();
-                        Log.d(TAG, "now--: " + now);
-                        if (now < timer) {
-                            long diff = timer - now;
-                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-                            String hms = sdf.format(diff);
-
-                            Toast.makeText(MainActivity.this, "将在以下时间后停止: " + hms, Toast.LENGTH_SHORT).show();
-                            stopTimer = new Timer();
-                            stopTimer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    for (Noise n : noiseList) {
-                                        n.stopAll();
-                                    }
-                                    Looper.prepare();
-                                    Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
-                                    Looper.loop();
-                                    /*finish();
-                                    System.exit(0);*/
-                                }
-                            }, diff); //diff秒后启动一次
-
-                        } else {
-                            Toast.makeText(MainActivity.this, "选择的时间无效", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
-                timePickerDialog.show();
                 break;
             default:
                 break;
@@ -263,5 +227,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case INTENT_STOP_TIME:
+                if (resultCode == RESULT_OK) {
+                    long millisecond = data.getLongExtra("millisecond", -1);
+                    boolean autoExit = data.getBooleanExtra("autoExit", true);
 
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    // 若不设置TimeZone，则会多出8小时（中国+8区）
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+                    String hms = sdf.format(millisecond);
+
+                    Log.d(TAG, "onActivityResult: " + hms + " " + autoExit);
+
+                    if (millisecond > 0) {
+                        Toast.makeText(MainActivity.this, "将在 " + hms + " 后停止", Toast.LENGTH_SHORT).show();
+                        stopTimer = new Timer();
+                        stopTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                for (Noise n : noiseList) {
+                                    n.stopAll();
+                                }
+                                Looper.prepare();
+                                Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
+                                if (autoExit) System.exit(0);
+                                Looper.loop();
+
+                            }
+                        }, millisecond); //millisecond 后启动一次
+                    } else {
+                        Toast.makeText(MainActivity.this, "时间无效", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                break;
+            default:
+        }
+    }
 }

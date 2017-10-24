@@ -81,4 +81,46 @@ public class Util {
     public static SharedPreferences getPref(Context context, String PREF_FILE_NAME) {
         return context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
     }
+
+    private void stopTime() {
+        /*final Calendar calendar = Calendar.getInstance();
+                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+
+                        calendar.set(Calendar.HOUR_OF_DAY, i);
+                        calendar.set(Calendar.MINUTE, i1);
+                        long timer = calendar.getTime().getTime();
+                        Log.d(TAG, "timer: " + timer);
+                        long now = new Date().getTime();
+                        Log.d(TAG, "now--: " + now);
+                        if (now < timer) {
+                            long diff = timer - now;
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+                            String hms = sdf.format(diff);
+
+                            Toast.makeText(MainActivity.this, "将在以下时间后停止: " + hms, Toast.LENGTH_SHORT).show();
+                            stopTimer = new Timer();
+                            stopTimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    for (Noise n : noiseList) {
+                                        n.stopAll();
+                                    }
+                                    Looper.prepare();
+                                    Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                    *//**//*finish();
+                                    System.exit(0);*//**//*
+                                }
+                            }, diff); //diff秒后启动一次
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "选择的时间无效", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                timePickerDialog.show();*/
+    }
 }
