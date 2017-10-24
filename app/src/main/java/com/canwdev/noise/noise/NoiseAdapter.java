@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
@@ -63,6 +64,11 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
     public void onBindViewHolder(NoiseAdapter.ViewHolder holder, int position) {
         Noise noise = mNoiseList.get(position);
         holder.cover.setImageResource(noise.getImageId());
+        if (!noise.getName().isEmpty()) {
+            holder.name.setText(noise.getName());
+        } else {
+            holder.name.setVisibility(View.INVISIBLE);
+        }
         holder.spl = noise.getSounds();
     }
 
@@ -74,12 +80,14 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
         View view;
         ImageView cover;
+        TextView name;
         SoundPoolRandom spl;
 
         public ViewHolder(View itemView) {
             super(itemView);
             view = itemView;
             cover = (ImageView) itemView.findViewById(R.id.image_noise);
+            name = (TextView) itemView.findViewById(R.id.textView_name);
         }
 
     }

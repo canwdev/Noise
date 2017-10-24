@@ -36,6 +36,7 @@ public class SoundPoolRandom {
         this.folderName = folderName;
         try {
             String[] audios = context.getResources().getAssets().list(folderName);
+            Log.d(TAG, "SoundPoolRandom: "+Arrays.toString(audios));
             maxSoundCount = audios.length;
             randomIdArray = new int[maxSoundCount];
             sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 0);

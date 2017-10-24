@@ -2,9 +2,9 @@
     <string name="app_name">噪音产生器</string>
     <string name="about_intro">用怎样的节奏抵制寝室的喧闹</string>
     <string name="activity_about">关于</string>
-    <string name="about_developer">API调用师：canwdev</string>
+    <string name="about_developer">API 调用者：canwdev</string>
     <string name="about_info">长时间播放噪音有风险，后果自负。</string>
-    <string name="about_github">开原地址</string>
+    <string name="about_github">开源地址</string>
     <string name="navigation_drawer_open">打开抽屉</string>
     <string name="navigation_drawer_close">关闭抽屉</string>
     <string name="loading">烧酒祈祷中...</string>

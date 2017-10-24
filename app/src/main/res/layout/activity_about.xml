@@ -101,7 +101,8 @@
                             android:layout_margin="@dimen/def_margin"
                             android:fontFamily="cursive"
                             android:padding="5dp"
-                            android:text="@string/about_developer" />
+                            android:text="@string/about_developer"
+                            android:textSize="10sp" />
                     </LinearLayout>
 
                     <LinearLayout
