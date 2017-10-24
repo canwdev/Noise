@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initNoises() {
         // TODO: 2017/10/24 从 assets 加载图片与文字
-        noiseList.add(new Noise(R.drawable.ic_shuffle_yellow_500_24dp, "inst/piano"));
+        noiseList.add(new Noise(R.drawable.sample, "inst/piano"));
 
         noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
         noiseList.add(new Noise(R.drawable.ra_boom, "ra2/audio_boom"));

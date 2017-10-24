@@ -21,10 +21,10 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/activity_about"
+            android:label="@string/activity_settings"
             android:theme="@style/AppTheme" />
         <activity android:name=".SetTimeActivity"
-            android:label="在以下时间后停止播放"
+            android:label="定时停止播放"
             android:theme="@style/Dialog"></activity>
     </application>
 

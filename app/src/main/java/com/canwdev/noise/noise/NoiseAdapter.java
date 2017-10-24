@@ -17,24 +17,11 @@ import java.util.List;
  * Created by CAN on 2017/10/15.
  */
 
-public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
+public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> {
     private List<Noise> mNoiseList;
 
     public NoiseAdapter(List<Noise> mNoiseList) {
         this.mNoiseList = mNoiseList;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        View view;
-        ImageView cover;
-        SoundPoolRandom spl;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            view = itemView;
-            cover = (ImageView) itemView.findViewById(R.id.image_noise);
-        }
-
     }
 
     @Override
@@ -45,37 +32,28 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
         // 设置点击事件
         final ViewHolder holder = new ViewHolder(view);
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.view.setOnClickListener(v -> {
+            int position = holder.getAdapterPosition();
+            Noise noise = mNoiseList.get(position);
+            noise.load(view.getContext());
+            noise.getSounds().play();
+        });
+
+        holder.view.setOnLongClickListener(v -> {
+            int position = holder.getAdapterPosition();
+            Noise noise = mNoiseList.get(position);
+            noise.load(view.getContext());
+            noise.getSounds().endlessPlay();
+            return true;
+        });
+
+        if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnTouch, false)) {
+            holder.view.setOnTouchListener((v, event)->{
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
                 noise.load(view.getContext());
                 noise.getSounds().play();
-            }
-        });
-
-        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                int position = holder.getAdapterPosition();
-                Noise noise = mNoiseList.get(position);
-                noise.load(view.getContext());
-                noise.getSounds().endlessPlay();
                 return true;
-            }
-        });
-
-        if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnTouch, false)) {
-            holder.view.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    int position = holder.getAdapterPosition();
-                    Noise noise = mNoiseList.get(position);
-                    noise.load(view.getContext());
-                    noise.getSounds().play();
-                    return true;
-                }
             });
         }
         return holder;
@@ -91,6 +69,19 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
     @Override
     public int getItemCount() {
         return mNoiseList.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        View view;
+        ImageView cover;
+        SoundPoolRandom spl;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            view = itemView;
+            cover = (ImageView) itemView.findViewById(R.id.image_noise);
+        }
+
     }
 
 

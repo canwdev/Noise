@@ -2,6 +2,9 @@ package com.canwdev.noise.noise;
 
 import android.content.Context;
 
+import com.canwdev.noise.MainActivity;
+import com.canwdev.noise.util.SoundPoolUtil;
+
 /**
  * Created by CAN on 2017/10/15.
  */
@@ -28,16 +31,14 @@ public class Noise {
     }
 
     public void load(Context context) {
-        // TODO: 2017/10/24 第一次初始化不发声 ，线程问题
         if (!loaded) {
             sounds = new SoundPoolRandom(context, folderName);
             loaded = true;
-        }
-    }
 
-    public void unload() {
-        sounds.release();
-        loaded = false;
+            // TODO: 2017/10/24 第一次初始化不发声 ，线程问题
+            SoundPoolUtil spu = SoundPoolUtil.getInstance(context);
+            spu.play(2);
+        }
     }
 
     public int getImageId() {

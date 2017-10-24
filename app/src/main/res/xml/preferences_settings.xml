@@ -18,7 +18,7 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="check_box_enable_loop_play"
+            android:key="check_box_enable_multiLoop"
             android:summary="禁忌 · 多重存在"
             android:title="允许重复" />
         <EditTextPreference
@@ -32,15 +32,15 @@
             android:title="固定播放间隔（毫秒）" />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="audio_play_random_interval"
-            android:summary="会有玄学效果，固定间隔将被忽略"
+            android:key="check_box_enable_randomInterval"
+            android:summary="玄学播放间隔，固定间隔将被忽略"
             android:title="启用随机播放"
             android:visibility="invisible" />
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="1000"
-            android:dependency="audio_play_random_interval"
+            android:dependency="check_box_enable_randomInterval"
             android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
             android:inputType="numberDecimal"
             android:key="edit_text_preference_1"
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="1000"
-            android:dependency="audio_play_random_interval"
+            android:dependency="check_box_enable_randomInterval"
             android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
             android:inputType="numberDecimal"
             android:key="edit_text_preference_1"
