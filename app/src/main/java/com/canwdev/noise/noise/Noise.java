@@ -1,5 +1,7 @@
 package com.canwdev.noise.noise;
 
+import android.content.Context;
+
 /**
  * Created by CAN on 2017/10/15.
  */
@@ -7,10 +9,34 @@ package com.canwdev.noise.noise;
 public class Noise {
     private int imageId;
     private SoundPoolRandom sounds;
+    private String folderName = "";
+    private boolean loaded = false;
 
-    public Noise(int imageId, SoundPoolRandom sounds) {
+    public boolean isLoaded() {
+        return loaded;
+    }
+// 即将废弃
+    /*public Noise(int imageId, SoundPoolRandom sounds) {
         this.imageId = imageId;
         this.sounds = sounds;
+        loaded = true;
+    }*/
+
+    public Noise(int imageId, String folderName) {
+        this.imageId = imageId;
+        this.folderName = folderName;
+    }
+
+    public void load(Context context) {
+        if (!loaded) {
+            sounds = new SoundPoolRandom(context, folderName);
+            loaded = true;
+        }
+    }
+
+    public void unload() {
+        sounds.release();
+        loaded = false;
     }
 
     public int getImageId() {
@@ -21,5 +47,12 @@ public class Noise {
         return sounds;
     }
 
-
+    public void stopAll() {
+        if (loaded) {
+            sounds.stop();
+            sounds.release();
+            sounds.stopEndlessPlay();
+            loaded = false;
+        }
+    }
 }

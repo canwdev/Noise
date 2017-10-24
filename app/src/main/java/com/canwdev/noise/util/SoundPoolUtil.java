@@ -37,7 +37,7 @@ public class SoundPoolUtil {
      */
     public static void playAssetsRandomBad(Context context) {
         final SoundPool sound = new SoundPool(1, AudioManager.STREAM_MUSIC, 5);
-        sound.load(loadAssetRandomly(context, "audio_box"), 1);
+        sound.load(loadAssetRandomly(context, "ra2/audio_box"), 1);
         sound.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {

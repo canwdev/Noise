@@ -50,6 +50,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
             public void onClick(View view) {
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
+                noise.load(view.getContext());
                 noise.getSounds().play();
             }
         });
@@ -59,6 +60,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
             public boolean onLongClick(View v) {
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
+                noise.load(view.getContext());
                 noise.getSounds().endlessPlay();
                 return true;
             }
@@ -70,6 +72,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder>{
                 public boolean onTouch(View v, MotionEvent event) {
                     int position = holder.getAdapterPosition();
                     Noise noise = mNoiseList.get(position);
+                    noise.load(view.getContext());
                     noise.getSounds().play();
                     return true;
                 }

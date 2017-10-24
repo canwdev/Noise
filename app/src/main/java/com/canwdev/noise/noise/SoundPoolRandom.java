@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.canwdev.noise.util.Conf;
@@ -33,7 +32,7 @@ public class SoundPoolRandom {
         try {
             String[] audios = context.getResources().getAssets().list(folderName);
             maxSoundCount = audios.length;
-            sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 5);
+            sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 0);
 
             String randAudio = "";
             AssetFileDescriptor descriptor = null;
@@ -49,9 +48,9 @@ public class SoundPoolRandom {
 
     public void play() {
         Random r = new Random();
-        int id = r.nextInt(maxSoundCount+1);
+        int id = r.nextInt(maxSoundCount + 1);
         if (id == 0) id = 1;
-        sound.play(id, 1, 1, 0, 0, 1);
+        sound.play(id, 1, 1, 1, 0, 1f);
     }
 
     public void release() {

@@ -27,7 +27,6 @@ import android.widget.Toast;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.noise.NoiseAdapter;
 import com.canwdev.noise.util.Conf;
-import com.canwdev.noise.noise.SoundPoolRandom;
 import com.canwdev.noise.util.SoundPoolUtil;
 
 import java.text.SimpleDateFormat;
@@ -51,20 +50,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Noise> noiseList = new ArrayList<>();
 
     private void initNoises() {
-        noiseList.add(new Noise(R.drawable.ra_box, new SoundPoolRandom(this, "audio_box")));
-        noiseList.add(new Noise(R.drawable.ra_boom, new SoundPoolRandom(this, "audio_boom")));
-        noiseList.add(new Noise(R.drawable.ra_gun, new SoundPoolRandom(this, "audio_gun")));
-        noiseList.add(new Noise(R.drawable.ra_allied_base, new SoundPoolRandom(this, "audio_base")));
+        noiseList.add(new Noise(R.drawable.ic_shuffle_yellow_500_24dp, "inst/piano"));
 
-        noiseList.add(new Noise(R.drawable.gc_yuanshou, new SoundPoolRandom(this, "guichu/yuanshou")));
-        noiseList.add(new Noise(R.drawable.gc_gboy, new SoundPoolRandom(this, "guichu/gboy")));
-        noiseList.add(new Noise(R.drawable.gc_shengdiyage, new SoundPoolRandom(this, "guichu/shengdiyage")));
-        noiseList.add(new Noise(R.drawable.gc_liangyifeng, new SoundPoolRandom(this, "guichu/liangyifeng")));
+        noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
+        noiseList.add(new Noise(R.drawable.ra_boom, "ra2/audio_boom"));
+        noiseList.add(new Noise(R.drawable.ra_gun, "ra2/audio_gun"));
+        noiseList.add(new Noise(R.drawable.ra_allied_base, "ra2/audio_base"));
 
-        noiseList.add(new Noise(R.drawable.gc_liangfeifan, new SoundPoolRandom(this, "guichu/liangfeifan")));
-        noiseList.add(new Noise(R.drawable.gc_zhexue, new SoundPoolRandom(this, "guichu/zhexue")));
-        noiseList.add(new Noise(R.drawable.gc_haa, new SoundPoolRandom(this, "guichu/haa")));
-        noiseList.add(new Noise(R.drawable.gc_other, new SoundPoolRandom(this, "guichu/other")));
+        noiseList.add(new Noise(R.drawable.gc_yuanshou, "guichu/yuanshou"));
+        noiseList.add(new Noise(R.drawable.gc_gboy, "guichu/gboy"));
+        noiseList.add(new Noise(R.drawable.gc_shengdiyage, "guichu/shengdiyage"));
+        noiseList.add(new Noise(R.drawable.gc_liangyifeng, "guichu/liangyifeng"));
+
+        noiseList.add(new Noise(R.drawable.gc_liangfeifan, "guichu/liangfeifan"));
+        noiseList.add(new Noise(R.drawable.gc_zhexue, "guichu/zhexue"));
+        noiseList.add(new Noise(R.drawable.gc_haa, "guichu/haa"));
+        noiseList.add(new Noise(R.drawable.gc_other, "guichu/other"));
     }
 
     @Override
@@ -134,13 +135,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.setMessage("烧酒祈祷中...");
         dialog.setCancelable(false);
         dialog.show();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                initNoises();
-                dialog.dismiss();
-            }
-        }).start();
+        new Thread((Runnable) () -> {
+            initNoises();
+            dialog.dismiss();
+        }
+        ).start();
     }
 
     @Override
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
                 break;
 
-            case R.id.nav_fc:
+            case R.id.nav_reset:
                 final ProgressDialog dialog = new ProgressDialog(this);
                 dialog.setMessage("烧酒祈祷中...");
                 dialog.setCancelable(false);
@@ -164,16 +163,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void run() {
                         for (Noise n : noiseList) {
-                            n.getSounds().stop();
-                            n.getSounds().release();
-                            n.getSounds().stopEndlessPlay();
+                            n.stopAll();
                         }
                         noiseList.clear();
                         initNoises();
                         dialog.dismiss();
                     }
                 }).start();
-                // System.exit(0);
+                break;
+
+            case R.id.nav_fc:
+                System.exit(0);
                 break;
 
             case R.id.nav_about:
@@ -212,8 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_reset:
                 Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
                 for (Noise n : noiseList) {
-                    n.getSounds().stop();
-                    n.getSounds().stopEndlessPlay();
+                    n.stopAll();
                 }
                 break;
             case R.id.menu_stop_timer:
@@ -240,8 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 @Override
                                 public void run() {
                                     for (Noise n : noiseList) {
-                                        n.getSounds().stop();
-                                        n.getSounds().stopEndlessPlay();
+                                        n.stopAll();
                                     }
                                     Looper.prepare();
                                     Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
