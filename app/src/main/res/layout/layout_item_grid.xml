@@ -4,10 +4,9 @@
     android:layout_width="90dp"
     android:layout_height="90dp"
     android:layout_gravity="center"
-    android:background="@drawable/ic_star_yellow_500_24dp"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/def_margin_small"
+    android:padding="@dimen/def_padding_small"
     android:weightSum="1">
 
     <ImageView
@@ -17,7 +16,7 @@
         android:layout_gravity="center"
         android:foreground="?android:attr/selectableItemBackground"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/sample" />
+        app:srcCompat="@drawable/test" />
 
     <TextView
         android:id="@+id/textView_name"

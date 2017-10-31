@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,6 +28,7 @@ import com.canwdev.noise.noise.NoiseAdapter;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,6 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO 写备注
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final int INTENT_STOP_TIME = 1;
     private static final String TAG = "Main##";
@@ -44,26 +45,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Timer stopTimer;
 
     private List<Noise> noiseList = new ArrayList<>();
+    // 按2下返回键退出计时器
+    private long doubleBackExitTime = 0;
 
+    // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
-
         noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
         noiseList.add(new Noise(R.drawable.ra_boom, "ra2/audio_boom"));
         noiseList.add(new Noise(R.drawable.ra_gun, "ra2/audio_gun"));
         noiseList.add(new Noise(R.drawable.ra_allied_base, "ra2/audio_base"));
 
-        noiseList.add(new Noise(this, "guichu/yuanshou"));
-        noiseList.add(new Noise(this, "guichu/gboy"));
-        noiseList.add(new Noise(this,  "guichu/shengdiyage"));
-        noiseList.add(new Noise(this,  "guichu/liangyifeng"));
+        // 从指定文件夹自动查询/assets/guichu子文件夹名称，并通过重载的构造器自动加载内容
+        try {
+            String[] folders = getResources().getAssets().list("guichu");
+            for (String folderName : folders) {
+                noiseList.add(new Noise(this, "guichu/" + folderName));
+            }
 
-        noiseList.add(new Noise(this,  "guichu/liangfeifan"));
-        noiseList.add(new Noise(this,  "guichu/zhexue"));
-        noiseList.add(new Noise(this,  "guichu/haa"));
-        noiseList.add(new Noise(this,  "guichu/other"));
-
-        noiseList.add(new Noise(this, "testres"));
-        noiseList.add(new Noise(this, "inst/piano"));
+            // 测试用素材
+            folders = getResources().getAssets().list("testres");
+            for (String folderName : folders) {
+                noiseList.add(new Noise(this, "testres/" + folderName));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        // 抽屉滑动时播放声音
         if (pref.getBoolean(Conf.pEnDrSound, true)) {
             drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
                 @Override
@@ -119,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        // 初始化抽屉基本SoundPool，音频文件在/res/raw
         spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
 
 
@@ -144,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_reset:
+                // 重置列表中的所有SoundPool
                 // TODO: 2017/10/24 播放多个条目后其他条目点击不能播放的奇怪问题
                 final ProgressDialog dialog = new ProgressDialog(this);
                 dialog.setMessage(getString(R.string.loading));
@@ -163,6 +172,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_fc:
+                // 强行停止
+                for (Noise n : noiseList) {
+                    n.stopAll();
+                }
                 System.exit(0);
                 break;
 
@@ -184,7 +197,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if ((System.currentTimeMillis() - doubleBackExitTime) > 2000) {
+                Snackbar.make(drawer, "再按一次退出"
+                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                doubleBackExitTime = System.currentTimeMillis();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -208,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             case R.id.menu_stop_timer:
+                // 定时停止播放
                 Intent intent = new Intent(MainActivity.this, SetTimeActivity.class);
                 startActivityForResult(intent, INTENT_STOP_TIME);
 
@@ -219,6 +239,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (Noise n : noiseList) {
+            n.stopAll();
+        }
+    }
+
+    // 获取时间选择Activity的结果
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -245,7 +274,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                                 Looper.prepare();
                                 Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
-                                if (autoExit) System.exit(0);
+                                if (autoExit) {
+                                    for (Noise n : noiseList) {
+                                        n.stopAll();
+                                    }
+                                    System.exit(0);
+                                }
                                 Looper.loop();
 
                             }

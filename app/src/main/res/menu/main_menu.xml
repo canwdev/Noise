@@ -3,17 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_random_play"
-        android:icon="@drawable/ic_shuffle_yellow_500_24dp"
+        android:icon="@drawable/ic_shuffle_white_24dp"
         android:title="随机鬼畜"
+        android:visible="false"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_reset"
-        android:icon="@drawable/ic_notifications_off_yellow_500_24dp"
+        android:icon="@drawable/ic_stop_white_24dp"
         android:title="停止"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_stop_timer"
-        android:icon="@drawable/ic_timer_yellow_500_24dp"
+        android:icon="@drawable/ic_timer_white_24dp"
         android:title="定时停止"
         app:showAsAction="ifRoom" />
 </menu>

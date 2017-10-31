@@ -11,10 +11,10 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="switch_enable_button_touch"
-            android:summary="触摸按钮时发出声音"
-            android:title="按钮触摸事件" />
+            android:summary="触摸条目时发声"
+            android:title="触摸事件" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="循环设置（长按可循环播放）">
+    <PreferenceCategory android:title="循环设置（长按条目循环播放）">
 
         <CheckBoxPreference
             android:defaultValue="true"

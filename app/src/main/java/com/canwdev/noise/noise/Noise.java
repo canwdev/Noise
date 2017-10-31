@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 /**
  * Created by CAN on 2017/10/15.
+ * Noise类，用于存放声音的各种信息，从/assets读取
  */
 
 public class Noise {
@@ -27,13 +28,14 @@ public class Noise {
     private boolean loaded = false;
     private boolean loadByFolder = false;
 
+    // 早期构造器
     public Noise(int imageId, String folderName) {
         this.imageId = imageId;
         this.folderName = folderName;
         this.name = folderName;
     }
 
-    // 2017/10/24->31 从 assets 加载图片与文字
+    // 新构造器，从 assets 自动加载图片与文字（2017/10/24->31）
     public Noise(Context context, String folderName) {
         loadByFolder = true;
         this.folderName = folderName;
@@ -79,12 +81,13 @@ public class Noise {
         return loaded;
     }
 
+    // 一般是第一次点击条目时，加载SoundPool
     public void loadSoundPool(Context context) {
         if (!loaded) {
             sounds = new SoundPoolRandom(context, folderName, loadByFolder);
             loaded = true;
 
-            // 第一次初始化不发声 ，线程问题
+            // 第一次初始化不发声 ，并发问题
             SoundPoolUtil spu = SoundPoolUtil.getInstance(context);
             spu.play(2);
         } else {
@@ -104,6 +107,8 @@ public class Noise {
         return sounds;
     }
 
+    // 停止所有播放，
+    // 一定要停止BackgroundService服务，在sounds.stop()执行
     public void stopAll() {
         if (loaded) {
             sounds.stop();

@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by CAN on 2017/10/15.
+ * 用于适配RecyclerView的适配器
  */
 
 public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> {
@@ -30,9 +31,9 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_item_grid, parent, false);
 
-        // 设置点击事件
         final ViewHolder holder = new ViewHolder(view);
 
+        // 设置点击事件
         holder.view.setOnClickListener(v -> {
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
@@ -40,6 +41,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
             noise.getSounds().play();
         });
 
+        // 设置长按事件
         holder.view.setOnLongClickListener(v -> {
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
@@ -48,6 +50,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
             return true;
         });
 
+        // 设置触摸事件
         if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnTouch, false)) {
             holder.view.setOnTouchListener((v, event)->{
                 int position = holder.getAdapterPosition();
@@ -60,6 +63,11 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
         return holder;
     }
 
+    /**
+     * 初始化外观
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(NoiseAdapter.ViewHolder holder, int position) {
         Noise noise = mNoiseList.get(position);

@@ -1,12 +1,14 @@
 package com.canwdev.noise.noise;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.canwdev.noise.service.BackgroundService;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.Util;
 
@@ -18,6 +20,8 @@ import java.util.TimerTask;
 
 /**
  * Created by CAN on 2017/10/14.
+ * 本来可以是Noise的子类，但独立出来了
+ * 主要负责加载SoundPool、播放、无限随机播放、停止等功能
  */
 
 public class SoundPoolRandom {
@@ -37,6 +41,8 @@ public class SoundPoolRandom {
         this.folderName = folderName;
         try {
             filenames = context.getResources().getAssets().list(folderName);
+
+            // 如果是直接从文件夹加载
             if (loadByFolder) {
                 // 删除数组中的Conf.F_INFO
                 for (int i = 0; i < filenames.length; i++) {
@@ -75,7 +81,7 @@ public class SoundPoolRandom {
         }
     }
 
-    // 尽量不重复
+    // 尽量不重复的创建随机数组
     public void initRandom() {
         random = new Random();
         for (int i = 0; i < randomIdArray.length; i++) {
@@ -91,7 +97,7 @@ public class SoundPoolRandom {
         randomIdArrayIndex = 0;
     }
 
-
+    // 从随机数组（randomIdArray）中顺序读取，读完重新生成随机数组，以避免重复
     public int randomId() {
         if (random == null) {
             initRandom();
@@ -118,12 +124,21 @@ public class SoundPoolRandom {
     }
 
     public void stop() {
+        // 停止BackgroundService服务
+        Intent intent = new Intent(mContext, BackgroundService.class);
+        mContext.stopService(intent);
+
         for (int i = 1; i <= maxSoundCount; i++) {
             sound.stop(i);
         }
     }
 
+    // [主要]无尽随机播放，若需停止，使用 noise.stopAll();
     public void endlessPlay() {
+        // 启动BackgroundService服务
+        // 注意：这在targetApi 26+ 不可直接使用
+        Intent intent = new Intent(mContext, BackgroundService.class);
+        mContext.startService(intent);
 
         if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnRandomInterval, false)) {
             if (endlessPlayTimer == null) {
@@ -133,9 +148,9 @@ public class SoundPoolRandom {
             }
         } else {
             if (endlessPlayTimer == null) {
-                directDndlessPlay();
+                directEndlessPlay();
             } else if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnMultiLoop, true)) {
-                directDndlessPlay();
+                directEndlessPlay();
             } else {
                 Toast.makeText(mContext, "不允许重复循环播放，请到设置修改", Toast.LENGTH_SHORT).show();
             }
@@ -144,12 +159,13 @@ public class SoundPoolRandom {
 
     }
 
-    private void directDndlessPlay() {
+    // 普通间隔循环播放
+    private void directEndlessPlay() {
+
         Toast.makeText(mContext, folderName + " 循环播放中，共 " + maxSoundCount + " 个文件", Toast.LENGTH_SHORT).show();
         long interval = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAuPlInterval, "1500"));
 
         endlessPlayTimer = new Timer();
-        // TODO: 2017/10/31 Android 息屏后无法播放的问题（需要使用服务？）
         endlessPlayTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -158,6 +174,7 @@ public class SoundPoolRandom {
         }, 0, interval);
     }
 
+    // 随机间隔循环播放
     private void randomIntervalDndlessPlay() {
         // TODO: 2017/10/24 随机间隔循环播放
         Toast.makeText(mContext, "未实现：随机间隔循环播放功能开发中...", Toast.LENGTH_SHORT).show();
