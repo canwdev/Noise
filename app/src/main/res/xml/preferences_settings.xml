@@ -33,8 +33,8 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="check_box_enable_randomInterval"
-            android:summary="玄学播放间隔，固定间隔将被忽略"
-            android:title="启用随机播放"
+            android:summary="随机间隔播放间隔，固定间隔将被忽略"
+            android:title="启用随机间隔"
             android:visibility="invisible" />
         <EditTextPreference
             android:layout_width="wrap_content"

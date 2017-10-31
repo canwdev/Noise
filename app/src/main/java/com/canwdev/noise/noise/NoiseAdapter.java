@@ -1,8 +1,8 @@
 package com.canwdev.noise.noise;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,14 +36,14 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
         holder.view.setOnClickListener(v -> {
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
-            noise.load(view.getContext());
+            noise.loadSoundPool(view.getContext());
             noise.getSounds().play();
         });
 
         holder.view.setOnLongClickListener(v -> {
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
-            noise.load(view.getContext());
+            noise.loadSoundPool(view.getContext());
             noise.getSounds().endlessPlay();
             return true;
         });
@@ -52,7 +52,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
             holder.view.setOnTouchListener((v, event)->{
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
-                noise.load(view.getContext());
+                noise.loadSoundPool(view.getContext());
                 noise.getSounds().play();
                 return true;
             });
@@ -63,11 +63,18 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(NoiseAdapter.ViewHolder holder, int position) {
         Noise noise = mNoiseList.get(position);
-        holder.cover.setImageResource(noise.getImageId());
-        if (!noise.getName().isEmpty()) {
-            holder.name.setText(noise.getName());
+        Bitmap cover = noise.getImageBmp();
+
+        if (cover != null) {
+            holder.imageView_cover.setImageBitmap(cover);
         } else {
-            holder.name.setVisibility(View.INVISIBLE);
+            holder.imageView_cover.setImageResource(noise.getImageId());
+        }
+
+        if (!noise.getName().isEmpty()) {
+            holder.textView_name.setText(noise.getName());
+        } else {
+            holder.textView_name.setVisibility(View.INVISIBLE);
         }
         holder.spl = noise.getSounds();
     }
@@ -79,15 +86,15 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         View view;
-        ImageView cover;
-        TextView name;
+        ImageView imageView_cover;
+        TextView textView_name;
         SoundPoolRandom spl;
 
         public ViewHolder(View itemView) {
             super(itemView);
             view = itemView;
-            cover = (ImageView) itemView.findViewById(R.id.image_noise);
-            name = (TextView) itemView.findViewById(R.id.textView_name);
+            imageView_cover = (ImageView) itemView.findViewById(R.id.image_noise);
+            textView_name = (TextView) itemView.findViewById(R.id.textView_name);
         }
 
     }

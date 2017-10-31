@@ -30,21 +30,43 @@ public class SoundPoolRandom {
     private Random random = null;
     private int[] randomIdArray;
     private int randomIdArrayIndex;
+    private String[] filenames;
 
-    public SoundPoolRandom(Context context, String folderName) {
+    public SoundPoolRandom(Context context, String folderName, boolean loadByFolder) {
         mContext = context;
         this.folderName = folderName;
         try {
-            String[] audios = context.getResources().getAssets().list(folderName);
-            Log.d(TAG, "SoundPoolRandom: "+Arrays.toString(audios));
-            maxSoundCount = audios.length;
+            filenames = context.getResources().getAssets().list(folderName);
+            if (loadByFolder) {
+                // 删除数组中的Conf.F_INFO
+                for (int i = 0; i < filenames.length; i++) {
+                    if (filenames[i].equals(Conf.F_INFO)) {
+                        for (int j = i; j < filenames.length - 1; j++) {
+                            filenames[j] = filenames[j + 1];
+                        }
+                        filenames = Arrays.copyOf(filenames, filenames.length - 1);
+                        break;
+                    }
+                }
+                // 删除数组中的Conf.F_COVER
+                for (int i = 0; i < filenames.length; i++) {
+                    if (filenames[i].equals(Conf.F_COVER)) {
+                        for (int j = i; j < filenames.length - 1; j++) {
+                            filenames[j] = filenames[j + 1];
+                        }
+                        filenames = Arrays.copyOf(filenames, filenames.length - 1);
+                        break;
+                    }
+                }
+            }
+            Log.d(TAG, "SoundPoolRandom: " + Arrays.toString(filenames));
+            maxSoundCount = filenames.length;
             randomIdArray = new int[maxSoundCount];
             sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 0);
 
-            String randAudio = "";
             AssetFileDescriptor descriptor = null;
             for (int i = 0; i < maxSoundCount; i++) {
-                descriptor = context.getResources().getAssets().openFd(folderName + "/" + audios[i]);
+                descriptor = context.getResources().getAssets().openFd(folderName + "/" + filenames[i]);
                 sound.load(descriptor, 1);
             }
 
@@ -53,8 +75,8 @@ public class SoundPoolRandom {
         }
     }
 
-    // 尽量不重复（玄学随机??）
-    public void initRandom(){
+    // 尽量不重复
+    public void initRandom() {
         random = new Random();
         for (int i = 0; i < randomIdArray.length; i++) {
             int number = random.nextInt(maxSoundCount) + 1;
@@ -65,7 +87,7 @@ public class SoundPoolRandom {
                 }
             }
         }
-        Log.d(TAG, "randomId: "+ Arrays.toString(randomIdArray));
+        Log.d(TAG, "randomId: " + Arrays.toString(randomIdArray));
         randomIdArrayIndex = 0;
     }
 
@@ -75,7 +97,7 @@ public class SoundPoolRandom {
             initRandom();
             return randomIdArray[randomIdArrayIndex];
         } else {
-            if (randomIdArrayIndex < randomIdArray.length-1) {
+            if (randomIdArrayIndex < randomIdArray.length - 1) {
                 ++randomIdArrayIndex;
                 return randomIdArray[randomIdArrayIndex];
             } else {
@@ -107,7 +129,7 @@ public class SoundPoolRandom {
             if (endlessPlayTimer == null) {
                 randomIntervalDndlessPlay();
             } else {
-                Toast.makeText(mContext, "玄学循环不允许重复循环播放", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "随机间隔循环不允许重复循环播放", Toast.LENGTH_SHORT).show();
             }
         } else {
             if (endlessPlayTimer == null) {
@@ -127,6 +149,7 @@ public class SoundPoolRandom {
         long interval = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAuPlInterval, "1500"));
 
         endlessPlayTimer = new Timer();
+        // TODO: 2017/10/31 Android 息屏后无法播放的问题（需要使用服务？）
         endlessPlayTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -136,8 +159,8 @@ public class SoundPoolRandom {
     }
 
     private void randomIntervalDndlessPlay() {
-        // TODO: 2017/10/24 玄学循环播放
-        Toast.makeText(mContext, "未实现：玄学循环播放功能开发中...", Toast.LENGTH_SHORT).show();
+        // TODO: 2017/10/24 随机间隔循环播放
+        Toast.makeText(mContext, "未实现：随机间隔循环播放功能开发中...", Toast.LENGTH_SHORT).show();
     }
 
     public void stopEndlessPlay() {

@@ -1,11 +1,16 @@
 package com.canwdev.noise.noise;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 /**
@@ -13,11 +18,14 @@ import java.util.Arrays;
  */
 
 public class Noise {
+    private static final String TAG = "NOISE##";
     private int imageId;
+    private Bitmap imageBmp = null;
     private SoundPoolRandom sounds;
     private String folderName = "";
     private String name = "";
     private boolean loaded = false;
+    private boolean loadByFolder = false;
 
     public Noise(int imageId, String folderName) {
         this.imageId = imageId;
@@ -25,48 +33,62 @@ public class Noise {
         this.name = folderName;
     }
 
-    // TODO: 2017/10/24 从 assets 加载图片与文字
+    // 2017/10/24->31 从 assets 加载图片与文字
     public Noise(Context context, String folderName) {
+        loadByFolder = true;
+        this.folderName = folderName;
         try {
             String[] filenames = context.getResources().getAssets().list(folderName);
 
-            int resultInfo = Arrays.binarySearch(filenames, "info");
-            AssetFileDescriptor infoFile;
-            int resultCover = Arrays.binarySearch(filenames, "cover.jpg");
-            AssetFileDescriptor coverFile;
 
-            if (resultInfo > 0) {
-                infoFile = context.getResources()
-                        .getAssets().openFd(folderName + "/" + "info");
-                // 删除数组中的"info"
-                for (int i = 0; i < filenames.length; i++) {
-                    if (filenames[i] == "info") {
-                        for (int j = i; j < filenames.length - 1; j++) {
-                            filenames[j] = filenames[j + 1];
-                        }
-                        filenames = Arrays.copyOf(filenames, filenames.length - 1);
-                    }
+            int resultInfo = Arrays.binarySearch(filenames, Conf.F_INFO);
+            int resultCover = Arrays.binarySearch(filenames, Conf.F_COVER);
+
+            if (resultInfo > -1) {
+                // 读取第一行作为name
+                InputStream is_info = context.getResources().getAssets().open(folderName + "/" + Conf.F_INFO);
+                InputStreamReader reader = new InputStreamReader(is_info);
+                BufferedReader bufferedReader = new BufferedReader(reader);
+                StringBuffer buffer = new StringBuffer("");
+                String info_tmp;
+                while ((info_tmp = bufferedReader.readLine()) != null) {
+                    buffer.append(info_tmp);
+                    //buffer.append("\n");
+                    break;
+                }
+                this.name = info_tmp;
+                is_info.close();
+
+                if (resultCover > -1) {
+                    InputStream is_cover = context.getResources().getAssets().open(folderName + "/" + Conf.F_COVER);
+                    this.imageBmp = BitmapFactory.decodeStream(is_cover);
+                    is_cover.close();
                 }
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public Bitmap getImageBmp() {
+        return imageBmp;
+    }
+
     public boolean isLoaded() {
         return loaded;
     }
 
-    public void load(Context context) {
+    public void loadSoundPool(Context context) {
         if (!loaded) {
-            sounds = new SoundPoolRandom(context, folderName);
+            sounds = new SoundPoolRandom(context, folderName, loadByFolder);
             loaded = true;
 
             // 第一次初始化不发声 ，线程问题
             SoundPoolUtil spu = SoundPoolUtil.getInstance(context);
             spu.play(2);
+        } else {
+
         }
     }
 

@@ -10,4 +10,7 @@ public class Conf {
     public static final String pAuPlInterval = "audio_play_interval";
     public static final String pAuEnMultiLoop = "check_box_enable_multiLoop";
     public static final String pAuEnRandomInterval = "check_box_enable_randomInterval";
+
+    public static final String F_COVER = "_cover.jpg";
+    public static final String F_INFO = "_info";
 }

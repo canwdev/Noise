@@ -7,6 +7,6 @@
     <string name="about_github">开源地址</string>
     <string name="navigation_drawer_open">打开抽屉</string>
     <string name="navigation_drawer_close">关闭抽屉</string>
-    <string name="loading">烧酒祈祷中...</string>
+    <string name="loading">加载中...</string>
     <string name="activity_settings">控制中心</string>
 </resources>

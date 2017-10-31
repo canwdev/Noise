@@ -47,22 +47,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initNoises() {
 
-        noiseList.add(new Noise(R.drawable.sample, "inst/piano"));
-
         noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
         noiseList.add(new Noise(R.drawable.ra_boom, "ra2/audio_boom"));
         noiseList.add(new Noise(R.drawable.ra_gun, "ra2/audio_gun"));
         noiseList.add(new Noise(R.drawable.ra_allied_base, "ra2/audio_base"));
 
-        noiseList.add(new Noise(R.drawable.gc_yuanshou, "guichu/yuanshou"));
-        noiseList.add(new Noise(R.drawable.gc_gboy, "guichu/gboy"));
-        noiseList.add(new Noise(R.drawable.gc_shengdiyage, "guichu/shengdiyage"));
-        noiseList.add(new Noise(R.drawable.gc_liangyifeng, "guichu/liangyifeng"));
+        noiseList.add(new Noise(this, "guichu/yuanshou"));
+        noiseList.add(new Noise(this, "guichu/gboy"));
+        noiseList.add(new Noise(this,  "guichu/shengdiyage"));
+        noiseList.add(new Noise(this,  "guichu/liangyifeng"));
 
-        noiseList.add(new Noise(R.drawable.gc_liangfeifan, "guichu/liangfeifan"));
-        noiseList.add(new Noise(R.drawable.gc_zhexue, "guichu/zhexue"));
-        noiseList.add(new Noise(R.drawable.gc_haa, "guichu/haa"));
-        noiseList.add(new Noise(R.drawable.gc_other, "guichu/other"));
+        noiseList.add(new Noise(this,  "guichu/liangfeifan"));
+        noiseList.add(new Noise(this,  "guichu/zhexue"));
+        noiseList.add(new Noise(this,  "guichu/haa"));
+        noiseList.add(new Noise(this,  "guichu/other"));
+
+        noiseList.add(new Noise(this, "testres"));
+        noiseList.add(new Noise(this, "inst/piano"));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         // init the preferences data of Settings
         PreferenceManager.setDefaultValues(this, R.xml.preferences_settings, false);
-        // load preferences
+        // loadSoundPool preferences
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         // 初始化MD组件
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -127,16 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NoiseAdapter adapter = new NoiseAdapter(noiseList);
         recyclerView.setAdapter(adapter);
 
-
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage(getString(R.string.loading));
-        dialog.setCancelable(false);
-        dialog.show();
-        new Thread((Runnable) () -> {
-            initNoises();
-            dialog.dismiss();
-        }
-        ).start();
+        initNoises();
     }
 
     @Override
