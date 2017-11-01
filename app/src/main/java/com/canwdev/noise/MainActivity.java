@@ -23,15 +23,18 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.canwdev.noise.noise.Audio;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.noise.NoiseAdapter;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
+import com.canwdev.noise.util.Util;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private SoundPoolUtil spu_drawer;
     private Timer stopTimer;
-
+    private Audio bgm;
     private List<Noise> noiseList = new ArrayList<>();
     // 按2下返回键退出计时器
     private long doubleBackExitTime = 0;
@@ -72,6 +75,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    // 初始化界面音效与BGM
+    private void initAudio() {
+        // 初始化抽屉基本SoundPool，音频文件在/res/raw
+        spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
+
+        bgm = new Audio(this, "bgm/bgm_finally_animal_sister.mp3");
+    }
+
+    private void stopNoises() {
+        for (Noise n : noiseList) {
+            n.stopAll();
+        }
+        Snackbar.make(drawer, "循环播放停止"
+                , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +107,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        // 初始化界面音效与BGM
+        initAudio();
+
         // 抽屉滑动时播放声音
         if (pref.getBoolean(Conf.pEnDrSound, true)) {
             drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
@@ -122,13 +145,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nav_header.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: BGM
+                // 点击播放bgm，再点暂停
+                if (bgm.isPlaying()) {
+                    bgm.pause();
+                } else {
+                    bgm.play();
+                }
+                Snackbar.make(drawer, "BGM!!"
+                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             }
         });
-
-        // 初始化抽屉基本SoundPool，音频文件在/res/raw
-        spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
-
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
@@ -161,9 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (Noise n : noiseList) {
-                            n.stopAll();
-                        }
+                        stopNoises();
                         noiseList.clear();
                         initNoises();
                         dialog.dismiss();
@@ -173,9 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_fc:
                 // 强行停止
-                for (Noise n : noiseList) {
-                    n.stopAll();
-                }
+                stopNoises();
                 System.exit(0);
                 break;
 
@@ -218,13 +240,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_random_play:
-                // TODO: 2017/10/24 随机播放一段时间，同样使用SetTimeActivity
+                // 随机播放一段时间
+                int times = 100;
+                long interval = 50;
+
+                new Thread(() -> {
+                    for (int i = 0; i < times; i++) {
+                        try {
+                            Random random = new Random();
+                            Noise noise = noiseList.get(random.nextInt(noiseList.size()));
+                            noise.loadSoundPool(MainActivity.this);
+                            if (noise.isLoaded()) {
+                                noise.getSounds().play();
+                            }
+                            Thread.sleep(interval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
                 break;
             case R.id.menu_reset:
-                Toast.makeText(this, "循环播放停止", Toast.LENGTH_SHORT).show();
-                for (Noise n : noiseList) {
-                    n.stopAll();
-                }
+                stopNoises();
                 break;
             case R.id.menu_stop_timer:
                 // 定时停止播放
@@ -242,9 +280,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (Noise n : noiseList) {
-            n.stopAll();
-        }
+        stopNoises();
     }
 
     // 获取时间选择Activity的结果
@@ -264,20 +300,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.d(TAG, "onActivityResult: " + hms + " " + autoExit);
 
                     if (millisecond > 0) {
-                        Toast.makeText(MainActivity.this, "将在 " + hms + " 后停止", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "将在 " + hms + " 后停止", Toast.LENGTH_LONG).show();
                         stopTimer = new Timer();
                         stopTimer.schedule(new TimerTask() {
                             @Override
                             public void run() {
-                                for (Noise n : noiseList) {
-                                    n.stopAll();
-                                }
+                                stopNoises();
                                 Looper.prepare();
-                                Toast.makeText(MainActivity.this, "循环播放停止", Toast.LENGTH_SHORT).show();
                                 if (autoExit) {
-                                    for (Noise n : noiseList) {
-                                        n.stopAll();
-                                    }
+                                    stopNoises();
                                     System.exit(0);
                                 }
                                 Looper.loop();

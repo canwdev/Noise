@@ -84,7 +84,7 @@ public class Util {
         return context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
     }
 
-    private void stopTime() {
+    private void stopTimeChooser() {
         /*final Calendar calendar = Calendar.getInstance();
                 TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override

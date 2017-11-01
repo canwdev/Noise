@@ -4,8 +4,7 @@
     <item
         android:id="@+id/menu_random_play"
         android:icon="@drawable/ic_shuffle_white_24dp"
-        android:title="随机鬼畜"
-        android:visible="false"
+        android:title="随机播放一段时间"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_reset"
