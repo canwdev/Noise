@@ -43,7 +43,7 @@ public class Audio {
     public void play() {
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
-            mediaPlayer.setOnCompletionListener(e->{
+            mediaPlayer.setOnCompletionListener(e -> {
                 mediaPlayer.start();
             });
         }
@@ -62,7 +62,7 @@ public class Audio {
         }
     }
 
-    public boolean isPlaying(){
+    public boolean isPlaying() {
         return mediaPlayer.isPlaying();
     }
 }

@@ -52,7 +52,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
 
         // 设置触摸事件
         if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnTouch, false)) {
-            holder.view.setOnTouchListener((v, event)->{
+            holder.view.setOnTouchListener((v, event) -> {
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
                 noise.loadSoundPool(view.getContext());
@@ -65,6 +65,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
 
     /**
      * 初始化外观
+     *
      * @param holder
      * @param position
      */
@@ -96,7 +97,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
         View view;
         ImageView imageView_cover;
         TextView textView_name;
-        SoundPoolRandom spl;
+        Noise.SoundPoolRandom spl;
 
         public ViewHolder(View itemView) {
             super(itemView);

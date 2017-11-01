@@ -28,7 +28,6 @@ import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.noise.NoiseAdapter;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
-import com.canwdev.noise.util.Util;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -148,14 +147,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // 点击播放bgm，再点暂停
                 if (bgm.isPlaying()) {
                     bgm.pause();
+                    Snackbar.make(drawer, "BGM 暂停"
+                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 } else {
                     bgm.play();
+                    Snackbar.make(drawer, "BGM 播放中..."
+                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
-                Snackbar.make(drawer, "BGM!!"
-                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+
             }
         });
 
+        // TODO: 2017/11/1 item 用CardView
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         recyclerView.setLayoutManager(layoutManager);
@@ -179,7 +182,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_reset:
                 // 重置列表中的所有SoundPool
-                // TODO: 2017/10/24 播放多个条目后其他条目点击不能播放的奇怪问题
+                // TODO: 2017/11/1 Fix errors
+                // E/AudioTrack: AudioFlinger could not create track, status: -12
+                // E/SoundPool: Error creating AudioTrack
                 final ProgressDialog dialog = new ProgressDialog(this);
                 dialog.setMessage(getString(R.string.loading));
                 dialog.setCancelable(false);

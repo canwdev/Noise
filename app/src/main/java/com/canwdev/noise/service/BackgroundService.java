@@ -12,8 +12,6 @@ import com.canwdev.noise.MainActivity;
 import com.canwdev.noise.R;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class BackgroundService extends Service {
 

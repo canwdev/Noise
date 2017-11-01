@@ -19,47 +19,47 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="check_box_enable_multiLoop"
-            android:summary="禁忌 · 多重存在"
+            android:summaryOff="关闭"
+            android:summaryOn="禁忌 · 多重存在"
             android:title="允许重复" />
         <EditTextPreference
             android:defaultValue="1500"
-            android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
+            android:dialogIcon="@drawable/ic_timer_white_24dp"
             android:inputType="numberDecimal"
             android:key="audio_play_interval"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="固定播放间隔（毫秒）" />
+            android:title="固定间隔（毫秒）" />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="check_box_enable_randomInterval"
-            android:summary="随机间隔播放间隔，固定间隔将被忽略"
-            android:title="启用随机间隔"
-            android:visibility="invisible" />
+            android:key="check_box_enable_advancedInterval"
+            android:summary="该功能将随机播放几次短间隔，让后延迟一段长间隔，并且循环（固定间隔将被忽略）"
+            android:title="高级间隔（毫秒）" />
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="1000"
-            android:dependency="check_box_enable_randomInterval"
-            android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
+            android:defaultValue="2000"
+            android:dependency="check_box_enable_advancedInterval"
+            android:dialogIcon="@drawable/ic_timer_white_24dp"
             android:inputType="numberDecimal"
-            android:key="edit_text_preference_1"
+            android:key="advancedInterval_short"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="随机间隔：短时间" />
+            android:title="高级间隔：短时间" />
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="1000"
-            android:dependency="check_box_enable_randomInterval"
-            android:dialogIcon="@drawable/ic_star_yellow_500_24dp"
+            android:defaultValue="20000"
+            android:dependency="check_box_enable_advancedInterval"
+            android:dialogIcon="@drawable/ic_timer_white_24dp"
             android:inputType="numberDecimal"
-            android:key="edit_text_preference_1"
+            android:key="advancedInterval_long"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="随机间隔：长时间" />
+            android:title="高级间隔：长时间" />
     </PreferenceCategory>
 
 </PreferenceScreen>

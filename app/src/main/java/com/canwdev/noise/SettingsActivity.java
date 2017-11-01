@@ -51,6 +51,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         addPreferencesFromResource(R.xml.preferences_settings);
 
         bindPreferenceSummaryToValue(findPreference(Conf.pAuPlInterval));
+
+        bindPreferenceSummaryToValue(findPreference(Conf.pAdvancedIntervalShort));
+        bindPreferenceSummaryToValue(findPreference(Conf.pAdvancedIntervalLong));
     }
 
     @Override

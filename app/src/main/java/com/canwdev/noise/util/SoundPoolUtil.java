@@ -6,8 +6,6 @@ import android.media.SoundPool;
 
 import com.canwdev.noise.R;
 
-import static com.canwdev.noise.util.Util.loadAssetRandomly;
-
 /**
  * Created by CAN on 2017/10/14.
  */
