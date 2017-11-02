@@ -38,8 +38,9 @@
         android:id="@+id/text_nav_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="64dp"
         android:text="@string/about_intro"
         android:textColor="@color/colorAccent"
-        android:textSize="18sp" />
+        android:textSize="14sp" />
 
 </LinearLayout>

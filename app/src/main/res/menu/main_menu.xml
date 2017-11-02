@@ -4,16 +4,16 @@
     <item
         android:id="@+id/menu_random_play"
         android:icon="@drawable/ic_shuffle_white_24dp"
-        android:title="随机"
+        android:title="@string/random"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_reset"
         android:icon="@drawable/ic_stop_white_24dp"
-        android:title="停止"
+        android:title="@string/stop"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_stop_timer"
         android:icon="@drawable/ic_timer_white_24dp"
-        android:title="定时停止"
+        android:title="@string/stop_timer"
         app:showAsAction="always" />
 </menu>

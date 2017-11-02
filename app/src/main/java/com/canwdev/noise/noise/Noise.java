@@ -10,6 +10,7 @@ import android.media.SoundPool;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.canwdev.noise.R;
 import com.canwdev.noise.service.BackgroundService;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
@@ -71,12 +72,16 @@ public class Noise {
                 }
                 this.name = info_tmp;
                 is_info.close();
+            } else {
+                this.name = folderName;
+            }
 
-                if (resultCover > -1) {
-                    InputStream is_cover = context.getResources().getAssets().open(folderName + "/" + Conf.F_COVER);
-                    this.imageBmp = BitmapFactory.decodeStream(is_cover);
-                    is_cover.close();
-                }
+            if (resultCover > -1) {
+                InputStream is_cover = context.getResources().getAssets().open(folderName + "/" + Conf.F_COVER);
+                this.imageBmp = BitmapFactory.decodeStream(is_cover);
+                is_cover.close();
+            } else {
+                this.imageId = R.drawable.xxicon;
             }
 
         } catch (IOException e) {
@@ -254,7 +259,7 @@ public class Noise {
                 if (endlessPlayTimer == null) {
                     randomIntervalEndlessPlay();
                 } else {
-                    Toast.makeText(mContext, "高级间隔循环不允许重复循环播放", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.toast_adv_cycle_not_allowed, Toast.LENGTH_SHORT).show();
                 }
             } else {
                 if (endlessPlayTimer == null) {
@@ -262,7 +267,7 @@ public class Noise {
                 } else if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnMultiLoop, true)) {
                     directEndlessPlay();
                 } else {
-                    Toast.makeText(mContext, "不允许重复循环播放，请到设置修改", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.toast_cycle_not_allowed, Toast.LENGTH_SHORT).show();
                 }
             }
 

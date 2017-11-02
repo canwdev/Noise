@@ -3,6 +3,7 @@ package com.canwdev.noise;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for (Noise n : noiseList) {
             n.stopAll();
         }
-        Snackbar.make(drawer, "循环播放停止"
+        Snackbar.make(drawer, R.string.toast_cycle_stop
                 , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
     }
 
@@ -147,23 +148,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // 点击播放bgm，再点暂停
                 if (bgm.isPlaying()) {
                     bgm.pause();
-                    Snackbar.make(drawer, "BGM 暂停"
+                    Snackbar.make(drawer, R.string.bgm_pause
                             , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 } else {
                     bgm.play();
-                    Snackbar.make(drawer, "BGM 播放中..."
+                    Snackbar.make(drawer, R.string.bgm_playing
                             , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
 
             }
         });
 
-        // TODO: 2017/11/1 item 用CardView
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
-        recyclerView.setLayoutManager(layoutManager);
-        NoiseAdapter adapter = new NoiseAdapter(noiseList);
-        recyclerView.setAdapter(adapter);
+        int ori = this.getResources().getConfiguration().orientation; //获取屏幕方向
+        if(ori == Configuration.ORIENTATION_LANDSCAPE){
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            GridLayoutManager layoutManager = new GridLayoutManager(this, 6);
+            recyclerView.setLayoutManager(layoutManager);
+            NoiseAdapter adapter = new NoiseAdapter(noiseList);
+            recyclerView.setAdapter(adapter);
+        }else if(ori == Configuration.ORIENTATION_PORTRAIT){
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+            recyclerView.setLayoutManager(layoutManager);
+            NoiseAdapter adapter = new NoiseAdapter(noiseList);
+            recyclerView.setAdapter(adapter);
+        }
+
+
 
         initNoises();
     }
@@ -189,14 +200,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dialog.setMessage(getString(R.string.loading));
                 dialog.setCancelable(false);
                 dialog.show();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        stopNoises();
-                        noiseList.clear();
-                        initNoises();
-                        dialog.dismiss();
-                    }
+                new Thread(() -> {
+                    stopNoises();
+                    noiseList.clear();
+                    initNoises();
+                    dialog.dismiss();
                 }).start();
                 break;
 
@@ -225,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if ((System.currentTimeMillis() - doubleBackExitTime) > 2000) {
-                Snackbar.make(drawer, "再按一次退出"
+                Snackbar.make(drawer, R.string.toast_press_again_to_exit
                         , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 doubleBackExitTime = System.currentTimeMillis();
             } else {
@@ -321,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                         }, millisecond); //millisecond 后启动一次
                     } else {
-                        Toast.makeText(MainActivity.this, "时间无效", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.toast_invalid_time, Toast.LENGTH_SHORT).show();
                     }
 
                 }

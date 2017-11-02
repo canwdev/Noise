@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="开关（部分设置重启应用生效）">
+    <PreferenceCategory android:title="@string/settings_switch">
 
         <SwitchPreference
             android:defaultValue="true"
             android:key="switch_enable_drawer_ssound"
-            android:summary="红警2菜单滑动音效"
-            android:title="抽屉音效" />
+            android:summary="@string/settings_ra2sound"
+            android:title="@string/settings_drawer_sound" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="switch_enable_button_touch"
-            android:summary="触摸条目时发声"
-            android:title="触摸事件" />
+            android:summary="@string/settings_touch_sound"
+            android:title="@string/settings_touch_event" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="循环设置（长按条目循环播放）">
+    <PreferenceCategory android:title="@string/settings_cycle">
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="check_box_enable_multiLoop"
             android:summaryOff="关闭"
             android:summaryOn="禁忌 · 多重存在"
-            android:title="允许重复" />
+            android:title="@string/settings_allow_cycle" />
         <EditTextPreference
             android:defaultValue="1500"
             android:dialogIcon="@drawable/ic_timer_white_24dp"
@@ -30,12 +30,12 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="固定间隔（毫秒）" />
+            android:title="@string/settings_interval" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="check_box_enable_advancedInterval"
             android:summary="该功能将随机播放几次短间隔，让后延迟一段长间隔，并且循环（固定间隔将被忽略）"
-            android:title="高级间隔（毫秒）" />
+            android:title="@string/settings_advanced_interval" />
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="高级间隔：短时间" />
+            android:title="@string/settings_advi_short" />
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="高级间隔：长时间" />
+            android:title="@string/settings_advi_long" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -26,7 +26,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".SetTimeActivity"
-            android:label="定时停止播放"
+            android:label="@string/activity_stop_timer"
             android:theme="@style/Dialog" />
 
         <service
