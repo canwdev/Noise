@@ -174,8 +174,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             recyclerView.setAdapter(adapter);
         }
 
-
-
         initNoises();
     }
 
