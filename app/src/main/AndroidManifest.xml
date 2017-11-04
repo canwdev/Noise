@@ -29,10 +29,17 @@
             android:label="@string/activity_stop_timer"
             android:theme="@style/Dialog" />
 
+        <activity
+            android:name=".noise.ShareViewActivity"
+            android:label="ShareViewActivity"
+            android:theme="@style/DialogNoTitle"/>
+
         <service
             android:name=".service.BackgroundService"
             android:enabled="true"
             android:exported="true"></service>
+
+
     </application>
 
 </manifest>

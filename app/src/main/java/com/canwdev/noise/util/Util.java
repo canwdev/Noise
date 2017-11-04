@@ -3,6 +3,7 @@ package com.canwdev.noise.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 
 import java.util.LinkedHashSet;
 import java.util.Random;

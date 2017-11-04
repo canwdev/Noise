@@ -13,6 +13,11 @@
             android:key="switch_enable_button_touch"
             android:summary="@string/settings_touch_sound"
             android:title="@string/settings_touch_event" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_enable_shareView"
+            android:summary="点击条目启动Activity，JellyBean以上系统"
+            android:title="ShareView" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_cycle">
 

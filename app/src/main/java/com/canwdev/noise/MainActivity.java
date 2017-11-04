@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         // 初始化MD组件
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        //toolbar.setSubtitle(R.string.professional);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -160,18 +162,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        int ori = this.getResources().getConfiguration().orientation; //获取屏幕方向
-        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+        /*int ori = this.getResources().getConfiguration().orientation; //获取屏幕方向
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {*/
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int screenWidthDp =  (int) (displayMetrics.widthPixels / displayMetrics.density);
+
+        if (screenWidthDp >= 600) {
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             GridLayoutManager layoutManager = new GridLayoutManager(this, 6);
             recyclerView.setLayoutManager(layoutManager);
-            NoiseAdapter adapter = new NoiseAdapter(noiseList);
+            NoiseAdapter adapter = new NoiseAdapter(this, noiseList);
             recyclerView.setAdapter(adapter);
-        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+        } else {
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
             recyclerView.setLayoutManager(layoutManager);
-            NoiseAdapter adapter = new NoiseAdapter(noiseList);
+            NoiseAdapter adapter = new NoiseAdapter(this, noiseList);
             recyclerView.setAdapter(adapter);
         }
 
@@ -242,7 +249,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if ((System.currentTimeMillis() - doubleBackExitTime) > 2000) {
+            // 智能的再按一次退出
+            boolean isPlaying = false;
+            for (Noise n : noiseList) {
+                if (n.isLoaded() && n.getSounds().isEndlessPlaying()) {
+                    isPlaying = true;
+                    break;
+                }
+            }
+            if (isPlaying && (System.currentTimeMillis() - doubleBackExitTime) > 2000) {
                 Snackbar.make(drawer, R.string.toast_press_again_to_exit
                         , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 doubleBackExitTime = System.currentTimeMillis();

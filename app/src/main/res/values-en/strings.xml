@@ -4,7 +4,7 @@
     <string name="about_intro">Make noise easily</string>
     <string name="activity_about">About</string>
     <string name="about_developer">Developer: canwdev</string>
-    <string name="about_info">Warning: Playing noise for a long time is dangerous.</string>
+    <string name="about_info">This application follows Material Design\nWarning: Playing noise for a long time is dangerous.</string>
     <string name="about_github">Github...</string>
     <string name="navigation_drawer_open">navigation_drawer_open</string>
     <string name="navigation_drawer_close">navigation_drawer_close</string>
@@ -18,14 +18,14 @@
     <string name="bgm_playing">BGM Playing</string>
     <string name="toast_adv_cycle_not_allowed">Repeat not allowed in advanced interval mode</string>
     <string name="toast_cycle_not_allowed">Repeat not allowed, please change it in settings</string>
-    <string name="settings_switch">Switch</string>
+    <string name="settings_switch">Switch - To take effect, you may need to restart application</string>
     <string name="settings_ra2sound">RA2 drawer sound effects</string>
     <string name="settings_drawer_sound">Drawer sounds</string>
     <string name="settings_touch_sound">Play sounds while touch an item</string>
     <string name="settings_touch_event">Touch event</string>
-    <string name="settings_cycle">Repeat</string>
+    <string name="settings_cycle">Repeat (Long press the item to loop, use milliseconds)</string>
     <string name="settings_allow_cycle">Allow repeat</string>
-    <string name="settings_interval">Interval (millisecond)</string>
+    <string name="settings_interval">Interval</string>
     <string name="settings_advanced_interval">Advanced interval (millisecond)</string>
     <string name="settings_advi_short">Advanced interval: short</string>
     <string name="settings_advi_long">Advanced interval: long</string>
@@ -35,7 +35,7 @@
     <string name="stop">Stop</string>
     <string name="stop_timer">Stop timer</string>
     <string name="activity_stop_timer">Time to stop</string>
-    <string name="toast_press_again_to_exit">Press again to exit</string>
+    <string name="toast_press_again_to_exit">There are playing tasks now, press again to confirm exit</string>
     <string name="toast_cycle_stop">Stop repeat</string>
     <string name="toast_invalid_time">Invalid time</string>
 </resources>

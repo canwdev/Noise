@@ -55,7 +55,7 @@
                         android:paddingRight="4dp"
                         android:paddingTop="@dimen/text_margin"
                         android:text="@string/activity_about"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccent"
                         android:textStyle="bold" />
 
                     <View
@@ -81,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_margin="@dimen/text_margin"
-                            app:srcCompat="@drawable/ic_star_yellow_500_24dp" />
+                            app:srcCompat="@drawable/ic_settings_white_24dp" />
 
                         <TextView
                             android:id="@+id/textView_version"
@@ -118,7 +118,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_margin="@dimen/text_margin"
-                            app:srcCompat="@drawable/ic_star_yellow_500_24dp" />
+                            app:srcCompat="@drawable/ic_help_white_24dp" />
 
                         <TextView
                             android:id="@+id/textView5"
@@ -145,7 +145,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_margin="@dimen/text_margin"
-                            android:src="@drawable/ic_star_yellow_500_24dp" />
+                            app:srcCompat="@drawable/ic_stat" />
 
                         <TextView
                             android:layout_width="wrap_content"
