@@ -15,7 +15,6 @@ public class SetTimeActivity extends AppCompatActivity {
     private EditText editText_minute;
     private EditText editText_second;
     private Switch switch_autoExit;
-    private Button buttonOK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +24,7 @@ public class SetTimeActivity extends AppCompatActivity {
         editText_minute = (EditText) findViewById(R.id.editText_minute);
         editText_second = (EditText) findViewById(R.id.editText_second);
         switch_autoExit = (Switch) findViewById(R.id.switch_autoExit);
-        buttonOK = (Button) findViewById(R.id.button_ok);
+        Button buttonOK = (Button) findViewById(R.id.button_ok);
 
         buttonOK.setOnClickListener(i -> {
 
@@ -61,7 +60,7 @@ public class SetTimeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        long millisecond = 0;
+        long millisecond;
         millisecond = hour * 60 * 60 * 1000 + minute * 60 * 1000 + second * 1000;
         return millisecond;
     }

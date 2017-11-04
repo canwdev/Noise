@@ -30,9 +30,9 @@
             android:theme="@style/Dialog" />
 
         <activity
-            android:name=".noise.ShareViewActivity"
-            android:label="ShareViewActivity"
-            android:theme="@style/DialogNoTitle"/>
+            android:name=".noise.DetailViewActivity"
+            android:theme="@style/AppTheme.NoActionBar_StatusBar"
+            android:label="@string/activity_detail_view"/>
 
         <service
             android:name=".service.BackgroundService"

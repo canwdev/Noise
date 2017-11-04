@@ -31,7 +31,6 @@ public class AboutActivity extends AppCompatActivity {
         try {
             String pkName = this.getPackageName();
             String versionName = this.getPackageManager().getPackageInfo(pkName, 0).versionName;
-            int versionCode = this.getPackageManager().getPackageInfo(pkName, 0).versionCode;
 
             versionText.setText(pkName + "\n" + versionName);
         } catch (PackageManager.NameNotFoundException e) {

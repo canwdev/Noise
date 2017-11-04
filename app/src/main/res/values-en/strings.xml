@@ -22,10 +22,10 @@
     <string name="settings_ra2sound">RA2 drawer sound effects</string>
     <string name="settings_drawer_sound">Drawer sounds</string>
     <string name="settings_touch_sound">Play sounds while touch an item</string>
-    <string name="settings_touch_event">Touch event</string>
+    <string name="settings_touch_sound_summary">Touch event</string>
     <string name="settings_cycle">Repeat (Long press the item to loop, use milliseconds)</string>
-    <string name="settings_allow_cycle">Allow repeat</string>
-    <string name="settings_interval">Interval</string>
+    <string name="settings_allow_cycle">Allow repeat in fixed intervals</string>
+    <string name="settings_interval">Fixed interval time</string>
     <string name="settings_advanced_interval">Advanced interval (millisecond)</string>
     <string name="settings_advi_short">Advanced interval: short</string>
     <string name="settings_advi_long">Advanced interval: long</string>
@@ -38,4 +38,8 @@
     <string name="toast_press_again_to_exit">There are playing tasks now, press again to confirm exit</string>
     <string name="toast_cycle_stop">Stop repeat</string>
     <string name="toast_invalid_time">Invalid time</string>
+    <string name="professional">Professional</string>
+    <string name="settings_detail_view">Detail view</string>
+    <string name="activity_detail_view">Detail View</string>
+    <string name="settings_detail_view_summary">Click to show details (JellyBean+)</string>
 </resources>

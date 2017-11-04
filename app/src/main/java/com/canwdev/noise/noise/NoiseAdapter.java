@@ -16,7 +16,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
@@ -55,8 +54,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
                     && Util.getDefPref(view.getContext()).getBoolean(Conf.pEnShareView, false)) {
 
-                Intent intent = new Intent(mContext, ShareViewActivity.class);
-                intent.putExtra("color", 3);
+                Intent intent = new Intent(mContext, DetailViewActivity.class);
                 intent.putExtra("name", noise.getName());
                 Bitmap cover = noise.getImageBmp();
                 if (cover != null) {
@@ -66,9 +64,8 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
                     intent.putExtra("coverBmp", false);
                     intent.putExtra("cover", noise.getImageId());
                 }
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("noise", noise);
-                intent.putExtras(bundle);
+
+                intent.putExtra("noise", noise);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
@@ -94,7 +91,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
 
             if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnAdvancedInterval, false)) {
                 if (!noise.getSounds().isEndlessPlaying()) {
-                    noise.getSounds().randomIntervalEndlessPlay();
+                    noise.getSounds().advancedEndlessPlay();
                     Snackbar.make(mParentView, name + " 高级间隔播放中，共 " + count + " 个文件"
                             , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 } else {
@@ -126,7 +123,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
                 Noise noise = mNoiseList.get(position);
                 noise.loadSoundPool(view.getContext());
                 noise.getSounds().play();
-                return true;
+                return false;
             });
         }
         return holder;
@@ -140,7 +137,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
      */
     @Override
     public void onBindViewHolder(NoiseAdapter.ViewHolder holder, int position) {
-        final NoiseAdapter.ViewHolder viewHolder = (NoiseAdapter.ViewHolder) holder;
+        final NoiseAdapter.ViewHolder viewHolder = holder;
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_recycler_item_show);
         viewHolder.imageView_cover.startAnimation(animation);
@@ -168,17 +165,17 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
         return mNoiseList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         View view;
         ImageView imageView_cover;
         TextView textView_name;
         SoundPoolRandom spl;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             view = itemView;
-            imageView_cover = (ImageView) itemView.findViewById(R.id.image_noise);
-            textView_name = (TextView) itemView.findViewById(R.id.textView_name);
+            imageView_cover = itemView.findViewById(R.id.image_noise);
+            textView_name = itemView.findViewById(R.id.textView_name);
         }
 
     }

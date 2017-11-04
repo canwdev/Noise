@@ -11,8 +11,9 @@
 ---
 
 * minSdkVersion 15
-* 部分素材来自 [GhostAnimalPlayer](https://github.com/CDFLS/GhostAnimalPlayer)
+* 本应用遵循 MaterialDesign
 * 长时间播放噪音有风险，后果自负。
+* 部分素材来自 [GhostAnimalPlayer](https://github.com/CDFLS/GhostAnimalPlayer)
 
 ---
 

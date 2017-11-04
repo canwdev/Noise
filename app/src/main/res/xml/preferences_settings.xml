@@ -12,19 +12,18 @@
             android:defaultValue="false"
             android:key="switch_enable_button_touch"
             android:summary="@string/settings_touch_sound"
-            android:title="@string/settings_touch_event" />
+            android:title="@string/settings_touch_sound_summary" />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="switch_enable_shareView"
-            android:summary="点击条目启动Activity，JellyBean以上系统"
-            android:title="ShareView" />
+            android:key="switch_enable_detailView"
+            android:summary="@string/settings_detail_view_summary"
+            android:title="@string/settings_detail_view" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_cycle">
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="check_box_enable_multiLoop"
-            android:summaryOff="关闭"
             android:summaryOn="禁忌 · 多重存在"
             android:title="@string/settings_allow_cycle" />
         <EditTextPreference
@@ -39,7 +38,7 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="check_box_enable_advancedInterval"
-            android:summary="该功能将随机播放几次短间隔，让后延迟一段长间隔，并且循环（固定间隔将被忽略）"
+            android:summary="用于模拟网游语音的间歇性。该功能将随机播放几次短间隔，让后延迟一段长间隔，并且循环 (固定间隔将被忽略)"
             android:title="@string/settings_advanced_interval" />
         <EditTextPreference
             android:layout_width="wrap_content"
@@ -56,7 +55,7 @@
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="20000"
+            android:defaultValue="61500"
             android:dependency="check_box_enable_advancedInterval"
             android:dialogIcon="@drawable/ic_timer_white_24dp"
             android:inputType="numberDecimal"

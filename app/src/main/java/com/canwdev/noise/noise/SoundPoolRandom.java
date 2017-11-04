@@ -14,6 +14,7 @@ import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.Util;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
@@ -24,7 +25,7 @@ import java.util.TimerTask;
  * 本类原来是Noise的子类。
  * 主要负责加载SoundPool、播放、无限随机播放、停止等功能
  */
-public class SoundPoolRandom implements Parcelable {
+public class SoundPoolRandom implements Serializable{
 
     private static final String TAG = "SPR##";
     //private Noise noise;
@@ -38,7 +39,7 @@ public class SoundPoolRandom implements Parcelable {
     private int randomIdArrayIndex;
     private String[] filenames;
 
-    public SoundPoolRandom(Context context, String folderName, boolean isLoadByFolder) {
+    SoundPoolRandom(Context context, String folderName, boolean isLoadByFolder) {
         this.mContext = context;
         this.folderName = folderName;
         try {
@@ -59,9 +60,7 @@ public class SoundPoolRandom implements Parcelable {
                 // 删除数组中的Conf.F_COVER
                 for (int i = 0; i < filenames.length; i++) {
                     if (filenames[i].equals(Conf.F_COVER)) {
-                        for (int j = i; j < filenames.length - 1; j++) {
-                            filenames[j] = filenames[j + 1];
-                        }
+                        System.arraycopy(filenames, i + 1, filenames, i, filenames.length - 1 - i);
                         filenames = Arrays.copyOf(filenames, filenames.length - 1);
                         break;
                     }
@@ -72,7 +71,7 @@ public class SoundPoolRandom implements Parcelable {
             randomIdArray = new int[maxSoundCount];
             sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 0);
 
-            AssetFileDescriptor descriptor = null;
+            AssetFileDescriptor descriptor;
             for (int i = 0; i < maxSoundCount; i++) {
                 descriptor = context.getResources().getAssets().openFd(folderName + "/" + filenames[i]);
                 sound.load(descriptor, 1);
@@ -91,28 +90,12 @@ public class SoundPoolRandom implements Parcelable {
         filenames = in.createStringArray();
     }
 
-    public static final Creator<SoundPoolRandom> CREATOR = new Creator<SoundPoolRandom>() {
-        @Override
-        public SoundPoolRandom createFromParcel(Parcel in) {
-            return new SoundPoolRandom(in);
-        }
-
-        @Override
-        public SoundPoolRandom[] newArray(int size) {
-            return new SoundPoolRandom[size];
-        }
-    };
-
     public boolean isEndlessPlaying() {
-        if (endlessPlayTimer != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return endlessPlayTimer != null;
     }
 
     // 尽量不重复的创建随机数组
-    public void initRandom() {
+    private void initRandom() {
         random = new Random();
         for (int i = 0; i < randomIdArray.length; i++) {
             int number = random.nextInt(maxSoundCount) + 1;
@@ -128,7 +111,7 @@ public class SoundPoolRandom implements Parcelable {
     }
 
     // 从随机数组（randomIdArray）中顺序读取，读完重新生成随机数组，以避免重复
-    public int randomId() {
+    private int randomId() {
         if (random == null) {
             initRandom();
             return randomIdArray[randomIdArrayIndex];
@@ -149,11 +132,11 @@ public class SoundPoolRandom implements Parcelable {
         sound.play(randomId(), 1, 1, 1, 0, 1f);
     }
 
-    public void release() {
+    void release() {
         sound.release();
     }
 
-    public void stop() {
+    void stop() {
         // 停止BackgroundService服务
         Intent intent = new Intent(mContext, BackgroundService.class);
         mContext.stopService(intent);
@@ -163,12 +146,18 @@ public class SoundPoolRandom implements Parcelable {
         }
     }
 
-    public int getMaxSoundCount() {
+    void stop2() {
+        for (int i = 1; i <= maxSoundCount; i++) {
+            sound.stop(i);
+        }
+    }
+
+    int getMaxSoundCount() {
         return maxSoundCount;
     }
 
     // 普通间隔循环播放
-    public void directEndlessPlay() {
+    void directEndlessPlay() {
         startService();
         long interval = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAuPlInterval, "1500"));
 
@@ -182,7 +171,7 @@ public class SoundPoolRandom implements Parcelable {
     }
 
     // 高级间隔循环播放
-    public void randomIntervalEndlessPlay() {
+    void advancedEndlessPlay() {
         startService();
 
         long intervalShort = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAdvancedIntervalShort, "2000"));
@@ -192,11 +181,11 @@ public class SoundPoolRandom implements Parcelable {
         endlessPlayTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                int times = new Random().nextInt(5);
+                int times = (new Random().nextInt(4)) + 1;
+
                 new Thread(() -> {
                     for (int i = 0; i < times; i++) {
                         try {
-                            Random random = new Random();
                             play();
                             Thread.sleep(intervalShort);
                         } catch (InterruptedException e) {
@@ -208,7 +197,7 @@ public class SoundPoolRandom implements Parcelable {
         }, 0, intervalLong);
     }
 
-    public void stopEndlessPlay() {
+    void stopEndlessPlay() {
         if (endlessPlayTimer != null) {
             endlessPlayTimer.cancel();
             endlessPlayTimer.purge();
@@ -221,19 +210,5 @@ public class SoundPoolRandom implements Parcelable {
         // 注意：这在targetApi 26+ 不可直接使用
         Intent intent = new Intent(mContext, BackgroundService.class);
         mContext.startService(intent);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(maxSoundCount);
-        dest.writeString(folderName);
-        dest.writeIntArray(randomIdArray);
-        dest.writeInt(randomIdArrayIndex);
-        dest.writeStringArray(filenames);
     }
 }

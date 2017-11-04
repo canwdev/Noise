@@ -21,10 +21,10 @@
     <string name="settings_ra2sound">红警2菜单滑动音效</string>
     <string name="settings_drawer_sound">抽屉音效</string>
     <string name="settings_touch_sound">触摸条目时发声</string>
-    <string name="settings_touch_event">触摸事件</string>
+    <string name="settings_touch_sound_summary">触摸事件</string>
     <string name="settings_cycle">循环设置 - 长按条目循环播放，单位毫秒</string>
-    <string name="settings_allow_cycle">允许重复</string>
-    <string name="settings_interval">固定间隔</string>
+    <string name="settings_allow_cycle">固定间隔允许重复</string>
+    <string name="settings_interval">固定间隔时间</string>
     <string name="settings_advanced_interval">高级间隔</string>
     <string name="settings_advi_short">高级间隔：短时间</string>
     <string name="settings_advi_long">高级间隔：长时间</string>
@@ -38,4 +38,7 @@
     <string name="toast_cycle_stop">循环播放停止</string>
     <string name="toast_invalid_time">时间无效</string>
     <string name="professional">专业版</string>
+    <string name="settings_detail_view_summary">点击条目显示详细信息 (JellyBean+)</string>
+    <string name="settings_detail_view">详细信息</string>
+    <string name="activity_detail_view">详细信息</string>
 </resources>

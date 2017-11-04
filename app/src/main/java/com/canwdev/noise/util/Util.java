@@ -33,7 +33,7 @@ public class Util {
     }*/
 
     //将毫秒转化为 时：分：秒 格式 ，例如  00:05:23
-    public static String calculatTime(int milliSecondTime) {
+    public static String calculateTime(int milliSecondTime) {
 
         int hour = milliSecondTime / (60 * 60 * 1000);
         int minute = (milliSecondTime - hour * 60 * 60 * 1000) / (60 * 1000);
@@ -48,9 +48,9 @@ public class Util {
             hour += minute / 60;
         }
 
-        String sh = "";
-        String sm = "";
-        String ss = "";
+        String sh;
+        String sm;
+        String ss;
         if (hour < 10) {
             sh = "0" + String.valueOf(hour);
         } else {
@@ -88,7 +88,7 @@ public class Util {
      */
     public static Set<Integer> generateRandomArray(int size) {
 
-        Set<Integer> set = new LinkedHashSet<Integer>(); //集合是没有重复的值,LinkedHashSet是有顺序不重复集合,HashSet则为无顺序不重复集合
+        Set<Integer> set = new LinkedHashSet<>(); //集合是没有重复的值,LinkedHashSet是有顺序不重复集合,HashSet则为无顺序不重复集合
         Integer num = size;
         Integer range = size;
         Random ran = new Random();

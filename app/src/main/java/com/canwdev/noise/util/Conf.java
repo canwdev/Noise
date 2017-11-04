@@ -8,7 +8,7 @@ public class Conf {
     // Preference Key
     public static final String pEnDrSound = "switch_enable_drawer_ssound";
     public static final String pEnTouch = "switch_enable_button_touch";
-    public static final String pEnShareView = "switch_enable_shareView";
+    public static final String pEnShareView = "switch_enable_detailView";
 
     public static final String pAuEnMultiLoop = "check_box_enable_multiLoop";
     public static final String pAuPlInterval = "audio_play_interval";

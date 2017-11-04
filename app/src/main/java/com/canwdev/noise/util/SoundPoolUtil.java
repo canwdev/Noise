@@ -6,11 +6,13 @@ import android.media.SoundPool;
 
 import com.canwdev.noise.R;
 
+import java.io.Serializable;
+
 /**
  * Created by CAN on 2017/10/14.
  */
 
-public class SoundPoolUtil {
+public class SoundPoolUtil implements Serializable {
     private static SoundPoolUtil soundPoolUtil;
     private SoundPool soundPool;
 

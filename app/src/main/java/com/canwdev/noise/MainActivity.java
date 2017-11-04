@@ -2,7 +2,7 @@ package com.canwdev.noise;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences pref;
     private DrawerLayout drawer;
     private SoundPoolUtil spu_drawer;
-    private Timer stopTimer;
     private Audio bgm;
     private List<Noise> noiseList = new ArrayList<>();
     // 按2下返回键退出计时器
@@ -144,49 +144,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setItemIconTintList(null);
 
         View headerView = navigationView.getHeaderView(0);
-        LinearLayout nav_header = (LinearLayout) headerView.findViewById(R.id.nav_header);
-        nav_header.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 点击播放bgm，再点暂停
-                if (bgm.isPlaying()) {
-                    bgm.pause();
-                    Snackbar.make(drawer, R.string.bgm_pause
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                } else {
-                    bgm.play();
-                    Snackbar.make(drawer, R.string.bgm_playing
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                }
-
+        LinearLayout nav_header = headerView.findViewById(R.id.nav_header);
+        nav_header.setOnClickListener(v -> {
+            // 点击播放bgm，再点暂停
+            if (bgm.isPlaying()) {
+                bgm.pause();
+                Snackbar.make(drawer, R.string.bgm_pause
+                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            } else {
+                bgm.play();
+                Snackbar.make(drawer, R.string.bgm_playing
+                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             }
+
         });
 
         /*int ori = this.getResources().getConfiguration().orientation; //获取屏幕方向
         if (ori == Configuration.ORIENTATION_LANDSCAPE) {*/
+        // 禁止横屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int screenWidthDp =  (int) (displayMetrics.widthPixels / displayMetrics.density);
+        int screenWidthDp = (int) (displayMetrics.widthPixels / displayMetrics.density);
 
-        if (screenWidthDp >= 600) {
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-            GridLayoutManager layoutManager = new GridLayoutManager(this, 6);
-            recyclerView.setLayoutManager(layoutManager);
-            NoiseAdapter adapter = new NoiseAdapter(this, noiseList);
-            recyclerView.setAdapter(adapter);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        int spanCount;
+
+        /*if (screenWidthDp >= 600) {
+            spanCount = 6;
         } else {
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-            GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
-            recyclerView.setLayoutManager(layoutManager);
-            NoiseAdapter adapter = new NoiseAdapter(this, noiseList);
-            recyclerView.setAdapter(adapter);
-        }
+            spanCount = 4;
+        }*/
+        spanCount = screenWidthDp / 100;
+        if (spanCount < 4) spanCount = 4;
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
+        recyclerView.setLayoutManager(layoutManager);
+        NoiseAdapter adapter = new NoiseAdapter(this, noiseList);
+        recyclerView.setAdapter(adapter);
 
         // 下拉重置SoundPool
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
         swipeRefresh.setOnRefreshListener(() -> {
-            resetSoundPool();
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(android.R.string.dialog_alert_title))
+                    .setOnDismissListener(dialog1 -> swipeRefresh.setRefreshing(false))
+                    .setMessage(getResources().getString(R.string.reset_soundpool) + "?")
+                    .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> swipeRefresh.setRefreshing(false))
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> resetSoundPool());
+            dialog.show();
         });
 
         initNoises();
@@ -238,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             noiseList.clear();
             initNoises();
             swipeRefresh.setRefreshing(false);
-            Snackbar.make(drawer, R.string.reset_soundpool
+            Snackbar.make(drawer, getString(R.string.reset_soundpool) + "\n" + getString(R.string.toast_cycle_stop)
                     , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         }).start();
     }
@@ -339,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     if (millisecond > 0) {
                         Toast.makeText(MainActivity.this, "将在 " + hms + " 后停止", Toast.LENGTH_LONG).show();
-                        stopTimer = new Timer();
+                        Timer stopTimer = new Timer();
                         stopTimer.schedule(new TimerTask() {
                             @Override
                             public void run() {

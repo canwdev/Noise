@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Arrays;
  * Noise类，用于存放声音的各种信息，从/assets读取
  */
 
-public class Noise implements Parcelable {
+public class Noise implements Parcelable{
 
     private static final String TAG = "NOISE##";
     private int imageId;
@@ -37,6 +38,10 @@ public class Noise implements Parcelable {
         this.imageId = imageId;
         this.folderName = folderName;
         this.name = folderName;
+    }
+
+    void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 
     // 新构造器，从 assets 自动加载图片与文字（2017/10/24->31）
@@ -55,7 +60,7 @@ public class Noise implements Parcelable {
                 InputStream is_info = context.getResources().getAssets().open(folderName + "/" + Conf.F_INFO);
                 InputStreamReader reader = new InputStreamReader(is_info);
                 BufferedReader bufferedReader = new BufferedReader(reader);
-                StringBuffer buffer = new StringBuffer("");
+                StringBuilder buffer = new StringBuilder("");
                 String info_tmp;
                 while ((info_tmp = bufferedReader.readLine()) != null) {
                     buffer.append(info_tmp);
@@ -102,7 +107,7 @@ public class Noise implements Parcelable {
         }
     };
 
-    public Bitmap getImageBmp() {
+    Bitmap getImageBmp() {
         return imageBmp;
     }
 
@@ -122,7 +127,7 @@ public class Noise implements Parcelable {
         }
     }
 
-    public int getImageId() {
+    int getImageId() {
         return imageId;
     }
 
@@ -145,6 +150,15 @@ public class Noise implements Parcelable {
         }
     }
 
+    public void stopAll2() {
+        if (loaded) {
+            sounds.stop2();
+            sounds.release();
+            sounds.stopEndlessPlay();
+            loaded = false;
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -152,10 +166,8 @@ public class Noise implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
         dest.writeInt(imageId);
         dest.writeParcelable(imageBmp, flags);
-        dest.writeParcelable(sounds, flags);
         dest.writeString(folderName);
         dest.writeString(name);
         dest.writeByte((byte) (loaded ? 1 : 0));
