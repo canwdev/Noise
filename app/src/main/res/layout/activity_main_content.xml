@@ -23,14 +23,17 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="@dimen/def_margin_small"
-        android:layout_marginRight="@dimen/def_margin_small"
-        android:paddingBottom="@dimen/def_padding_small"
-        android:paddingTop="@dimen/def_padding_small" />
+        android:padding="@dimen/def_padding_small">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

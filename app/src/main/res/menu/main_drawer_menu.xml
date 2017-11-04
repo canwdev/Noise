@@ -9,7 +9,8 @@
         <item
             android:id="@+id/nav_reset"
             android:icon="@drawable/ic_settings_backup_restore_white_24dp"
-            android:title="@string/reset_soundpool" />
+            android:title="@string/reset_soundpool"
+            android:visible="false" />
         <item
             android:id="@+id/nav_fc"
             android:icon="@drawable/ic_settings_power_white_24dp"

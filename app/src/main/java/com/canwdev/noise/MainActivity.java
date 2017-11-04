@@ -1,6 +1,5 @@
 package com.canwdev.noise;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -12,6 +11,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Noise> noiseList = new ArrayList<>();
     // 按2下返回键退出计时器
     private long doubleBackExitTime = 0;
+    private SwipeRefreshLayout swipeRefresh;
 
     // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
@@ -160,19 +161,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         int ori = this.getResources().getConfiguration().orientation; //获取屏幕方向
-        if(ori == Configuration.ORIENTATION_LANDSCAPE){
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             GridLayoutManager layoutManager = new GridLayoutManager(this, 6);
             recyclerView.setLayoutManager(layoutManager);
             NoiseAdapter adapter = new NoiseAdapter(noiseList);
             recyclerView.setAdapter(adapter);
-        }else if(ori == Configuration.ORIENTATION_PORTRAIT){
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
             recyclerView.setLayoutManager(layoutManager);
             NoiseAdapter adapter = new NoiseAdapter(noiseList);
             recyclerView.setAdapter(adapter);
         }
+
+        // 下拉重置SoundPool
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
+        swipeRefresh.setOnRefreshListener(() -> {
+            resetSoundPool();
+        });
 
         initNoises();
     }
@@ -190,20 +198,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_reset:
-                // 重置列表中的所有SoundPool
-                // TODO: 2017/11/1 Fix errors
-                // E/AudioTrack: AudioFlinger could not create track, status: -12
-                // E/SoundPool: Error creating AudioTrack
-                final ProgressDialog dialog = new ProgressDialog(this);
-                dialog.setMessage(getString(R.string.loading));
-                dialog.setCancelable(false);
-                dialog.show();
-                new Thread(() -> {
-                    stopNoises();
-                    noiseList.clear();
-                    initNoises();
-                    dialog.dismiss();
-                }).start();
+                resetSoundPool();
                 break;
 
             case R.id.nav_fc:
@@ -222,6 +217,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return true;
+    }
+
+    private void resetSoundPool() {
+        // 重置列表中的所有SoundPool
+        // TODO: 2017/11/1 Fix errors
+        // E/AudioTrack: AudioFlinger could not create track, status: -12
+        // E/SoundPool: Error creating AudioTrack
+        swipeRefresh.setRefreshing(true);
+
+        new Thread(() -> {
+            stopNoises();
+            noiseList.clear();
+            initNoises();
+            swipeRefresh.setRefreshing(false);
+            Snackbar.make(drawer, R.string.reset_soundpool
+                    , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        }).start();
     }
 
     @Override
