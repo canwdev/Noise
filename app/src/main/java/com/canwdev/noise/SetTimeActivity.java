@@ -1,12 +1,17 @@
 package com.canwdev.noise;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SetTimeActivity extends AppCompatActivity {
 
@@ -26,9 +31,22 @@ public class SetTimeActivity extends AppCompatActivity {
         switch_autoExit = (Switch) findViewById(R.id.switch_autoExit);
         Button buttonOK = (Button) findViewById(R.id.button_ok);
 
+        editText_minute.setFocusable(true);
+        editText_minute.setFocusableInTouchMode(true);
+        editText_minute.requestFocus();
+        // 自动弹出键盘
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+                    public void run() {
+                        InputMethodManager inputManager =
+                                (InputMethodManager) editText_minute.getContext()
+                                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.showSoftInput(editText_minute, 0);
+                    }
+                }, 998);
+
+
         buttonOK.setOnClickListener(i -> {
-
-
             Intent intent = new Intent();
             intent.putExtra("millisecond", getMillisecond());
             intent.putExtra("autoExit", switch_autoExit.isChecked());

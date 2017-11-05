@@ -191,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setTitle(getResources().getString(android.R.string.dialog_alert_title))
                     .setOnDismissListener(dialog1 -> swipeRefresh.setRefreshing(false))
                     .setMessage(getResources().getString(R.string.reset_soundpool) + "?")
+                    .setNeutralButton(getString(R.string.restart_app), (dialogInterface, i) -> {
+                        startActivity(new Intent(this, RestartActivity.class));
+                    })
                     .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> swipeRefresh.setRefreshing(false))
                     .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> resetSoundPool());
             dialog.show();

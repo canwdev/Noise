@@ -19,9 +19,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:selectAllOnFocus="true"
             android:hint="@string/hour"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/editText_minute"
@@ -30,7 +31,9 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/minute"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/editText_second"
@@ -39,7 +42,9 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/second"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
 
     </LinearLayout>
 

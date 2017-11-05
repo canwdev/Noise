@@ -50,8 +50,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     public void card_goTest(View view) {
-        finish();
-        System.exit(0);
+        
     }
 
     @Override

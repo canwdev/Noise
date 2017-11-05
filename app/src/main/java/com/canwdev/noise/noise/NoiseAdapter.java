@@ -68,8 +68,9 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
                 intent.putExtra("noise", noise);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
-                            ((Activity) mContext, holder.imageView_cover, "shareView").toBundle());
+                    mContext.startActivity(intent);
+//                    mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+//                            ((Activity) mContext, holder.imageView_cover, "shareView").toBundle());
                 } else {
                     mContext.startActivity(intent);
                 }
