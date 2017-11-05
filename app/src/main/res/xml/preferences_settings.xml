@@ -10,11 +10,13 @@
             android:title="@string/settings_drawer_sound" />
         <SwitchPreference
             android:defaultValue="false"
+            android:disableDependentsState="true"
             android:key="switch_enable_button_touch"
             android:summary="@string/settings_touch_sound"
             android:title="@string/settings_touch_sound_summary" />
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
+            android:dependency="switch_enable_button_touch"
             android:key="switch_enable_detailView"
             android:summary="@string/settings_detail_view_summary"
             android:title="@string/settings_detail_view" />

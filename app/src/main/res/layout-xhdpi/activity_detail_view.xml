@@ -53,13 +53,23 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-        <ListView
-            android:id="@+id/listView_sounds"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="@android:dimen/notification_large_icon_height"
+            android:orientation="vertical"
+            android:paddingBottom="64dp">
+
+            <com.canwdev.noise.util.NestedListView
+                android:id="@+id/listView_sounds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
     </android.support.v4.widget.NestedScrollView>
 
 

@@ -9,7 +9,9 @@
         android:launchMode="singleTop"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,17 +30,16 @@
             android:name=".SetTimeActivity"
             android:label="@string/activity_stop_timer"
             android:theme="@style/Dialog"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".noise.DetailViewActivity"
-            android:label="@string/activity_detail_view"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/activity_detail_view" />
 
         <service
             android:name=".service.BackgroundService"
             android:enabled="true"
             android:exported="true" />
-
         <activity android:name=".RestartActivity"></activity>
     </application>
 

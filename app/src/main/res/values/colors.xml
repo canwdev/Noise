@@ -5,6 +5,7 @@
     <color name="colorAccent">#ffeb3b</color>
     <color name="transparentDark">#93000000</color>.
     <color name="imageShadow">#66000000</color>.
+    <color name="lightTransparent">#11000000</color>.
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

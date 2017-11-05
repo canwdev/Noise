@@ -3,6 +3,8 @@ package com.canwdev.noise;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         // init the preferences data of Settings
         PreferenceManager.setDefaultValues(this, R.xml.preferences_settings, false);
         // loadSoundPool preferences
@@ -173,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         /*int ori = this.getResources().getConfiguration().orientation; //获取屏幕方向
         if (ori == Configuration.ORIENTATION_LANDSCAPE) {*/
         // 禁止横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int screenWidthDp = (int) (displayMetrics.widthPixels / displayMetrics.density);
@@ -248,6 +252,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return true;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     private void resetSoundPool() {

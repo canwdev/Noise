@@ -41,5 +41,5 @@
     <string name="settings_detail_view_summary">点击条目显示详细信息</string>
     <string name="settings_detail_view">详细信息</string>
     <string name="activity_detail_view">详细信息</string>
-    <string name="restart_app">Restart App</string>
+    <string name="restart_app">重启应用</string>
 </resources>

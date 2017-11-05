@@ -37,6 +37,11 @@ public class SoundPoolRandom implements Serializable{
     private Random random = null;
     private int[] randomIdArray;
     private int randomIdArrayIndex;
+
+    public String[] getFilenames() {
+        return filenames;
+    }
+
     private String[] filenames;
 
     SoundPoolRandom(Context context, String folderName, boolean isLoadByFolder) {
@@ -130,6 +135,10 @@ public class SoundPoolRandom implements Serializable{
 
     public void play() {
         sound.play(randomId(), 1, 1, 1, 0, 1f);
+    }
+
+    public void playById(int id) {
+        sound.play(id, 1, 1, 1, 0, 1f);
     }
 
     void release() {

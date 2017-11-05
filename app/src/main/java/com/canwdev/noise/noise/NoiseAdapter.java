@@ -128,7 +128,7 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
                 Noise noise = mNoiseList.get(position);
                 noise.loadSoundPool(view.getContext());
                 noise.getSounds().play();
-                return false;
+                return true;
             });
         }
         return holder;

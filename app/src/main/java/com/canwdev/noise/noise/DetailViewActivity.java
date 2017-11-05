@@ -1,6 +1,5 @@
 package com.canwdev.noise.noise;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -8,20 +7,19 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
+import com.canwdev.noise.util.NestedListView;
 import com.canwdev.noise.util.Util;
 
 public class DetailViewActivity extends AppCompatActivity {
@@ -32,12 +30,17 @@ public class DetailViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
         if (getIntent() != null) {
             collapsingToolbar.setTitle(getIntent().getStringExtra("name"));
+            toolbar.setSubtitle("Shared Element Transitions");
         }
         toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
         setSupportActionBar(toolbar);
@@ -68,14 +71,25 @@ public class DetailViewActivity extends AppCompatActivity {
 
 
         if (Util.getDefPref(this).getBoolean(Conf.pEnTouch, false)) {
-            collapsingToolbar.setOnTouchListener((v, event) -> {
+            cover.setOnTouchListener((v, event) -> {
                 noise.getSounds().play();
                 return false;
             });
         }
 
-
         fab_play.setOnClickListener(e -> noise.getSounds().play());
+
+        NestedListView listView = (NestedListView) findViewById(R.id.listView_sounds);
+        String[] sounds = noise.getSounds().getFilenames();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, sounds);
+
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            noise.getSounds().playById(position + 1);
+        });
     }
 
     @Override
