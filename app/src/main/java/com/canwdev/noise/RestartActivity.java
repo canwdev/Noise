@@ -11,6 +11,8 @@ import com.canwdev.noise.R;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.service.BackgroundService;
 
+// 通过启动这个Activity再执行System.exit(0)来重启App的所有Activity
+// 但服务仍需手动停止
 public class RestartActivity extends AppCompatActivity {
 
     @Override

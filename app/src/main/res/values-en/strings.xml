@@ -41,5 +41,5 @@
     <string name="professional">Professional</string>
     <string name="settings_detail_view">Detail view</string>
     <string name="activity_detail_view">Detail View</string>
-    <string name="settings_detail_view_summary">Click to show details (JellyBean+)</string>
+    <string name="settings_detail_view_summary">Click to show details</string>
 </resources>

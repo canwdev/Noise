@@ -34,17 +34,6 @@ public class SetTimeActivity extends AppCompatActivity {
         editText_minute.setFocusable(true);
         editText_minute.setFocusableInTouchMode(true);
         editText_minute.requestFocus();
-        // 自动弹出键盘
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-                    public void run() {
-                        InputMethodManager inputManager =
-                                (InputMethodManager) editText_minute.getContext()
-                                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputManager.showSoftInput(editText_minute, 0);
-                    }
-                }, 998);
-
 
         buttonOK.setOnClickListener(i -> {
             Intent intent = new Intent();

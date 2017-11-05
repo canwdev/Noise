@@ -1,9 +1,12 @@
 package com.canwdev.noise.noise;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -24,6 +27,7 @@ import com.canwdev.noise.util.Util;
 public class DetailViewActivity extends AppCompatActivity {
     private Noise noise;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,35 +53,19 @@ public class DetailViewActivity extends AppCompatActivity {
 
         if (intent != null) {
             if (getIntent().getBooleanExtra("coverBmp", false)) {
-                cover.setImageBitmap(intent.getParcelableExtra("cover"));
+                // 将bitmap转换成byte传输，防止大图片导致的内存溢出
+                byte[] bis = intent.getByteArrayExtra("cover");
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bis, 0, bis.length);
+                cover.setImageBitmap(bitmap);
             } else {
                 cover.setImageResource(intent.getIntExtra("cover", 0));
             }
-            noise = (Noise) intent.getParcelableExtra("noise");
+            noise = intent.getParcelableExtra("noise");
             noise.setLoaded(false);
             noise.loadSoundPool(this);
             //noise.getSounds().play();
         }
 
-        // 触摸时的动画，来自　https://github.com/Eajy/MaterialDesignDemo
-        fab_play.setOnTouchListener((view, motionEvent) -> {
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    ObjectAnimator upAnim = ObjectAnimator.ofFloat(view, "translationZ", 0);
-                    upAnim.setDuration(200);
-                    upAnim.setInterpolator(new DecelerateInterpolator());
-                    upAnim.start();
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    ObjectAnimator downAnim = ObjectAnimator.ofFloat(view, "translationZ", 10);
-                    downAnim.setDuration(200);
-                    downAnim.setInterpolator(new AccelerateInterpolator());
-                    downAnim.start();
-                    break;
-            }
-            return false;
-        });
 
         if (Util.getDefPref(this).getBoolean(Conf.pEnTouch, false)) {
             collapsingToolbar.setOnTouchListener((v, event) -> {

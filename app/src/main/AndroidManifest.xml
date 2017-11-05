@@ -27,7 +27,8 @@
         <activity
             android:name=".SetTimeActivity"
             android:label="@string/activity_stop_timer"
-            android:theme="@style/Dialog" />
+            android:theme="@style/Dialog"
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
         <activity
             android:name=".noise.DetailViewActivity"
             android:label="@string/activity_detail_view"

@@ -11,10 +11,11 @@ import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -22,8 +23,19 @@ import java.util.Arrays;
  * Noise类，用于存放声音的各种信息，从/assets读取
  */
 
-public class Noise implements Parcelable{
+public class Noise implements Parcelable {
 
+    public static final Creator<Noise> CREATOR = new Creator<Noise>() {
+        @Override
+        public Noise createFromParcel(Parcel in) {
+            return new Noise(in);
+        }
+
+        @Override
+        public Noise[] newArray(int size) {
+            return new Noise[size];
+        }
+    };
     private static final String TAG = "NOISE##";
     private int imageId;
     private Bitmap imageBmp = null;
@@ -38,10 +50,6 @@ public class Noise implements Parcelable{
         this.imageId = imageId;
         this.folderName = folderName;
         this.name = folderName;
-    }
-
-    void setLoaded(boolean loaded) {
-        this.loaded = loaded;
     }
 
     // 新构造器，从 assets 自动加载图片与文字（2017/10/24->31）
@@ -75,7 +83,15 @@ public class Noise implements Parcelable{
 
             if (resultCover > -1) {
                 InputStream is_cover = context.getResources().getAssets().open(folderName + "/" + Conf.F_COVER);
-                this.imageBmp = BitmapFactory.decodeStream(is_cover);
+                Bitmap temp = BitmapFactory.decodeStream(is_cover);
+
+                // 加载时先压缩一遍
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                temp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                ByteArrayInputStream isBm = new ByteArrayInputStream(out.toByteArray());
+
+                this.imageBmp = BitmapFactory.decodeStream(isBm);
+
                 is_cover.close();
             } else {
                 this.imageId = R.drawable.xxicon;
@@ -88,24 +104,13 @@ public class Noise implements Parcelable{
 
     protected Noise(Parcel in) {
         imageId = in.readInt();
-        imageBmp = in.readParcelable(Bitmap.class.getClassLoader());
+        // 大图片闪退
+        // imageBmp = in.readParcelable(Bitmap.class.getClassLoader());
         folderName = in.readString();
         name = in.readString();
         loaded = in.readByte() != 0;
         loadByFolder = in.readByte() != 0;
     }
-
-    public static final Creator<Noise> CREATOR = new Creator<Noise>() {
-        @Override
-        public Noise createFromParcel(Parcel in) {
-            return new Noise(in);
-        }
-
-        @Override
-        public Noise[] newArray(int size) {
-            return new Noise[size];
-        }
-    };
 
     Bitmap getImageBmp() {
         return imageBmp;
@@ -113,6 +118,10 @@ public class Noise implements Parcelable{
 
     public boolean isLoaded() {
         return loaded;
+    }
+
+    void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 
     // 一般是第一次点击条目时，加载SoundPool
@@ -167,7 +176,7 @@ public class Noise implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(imageId);
-        dest.writeParcelable(imageBmp, flags);
+        // dest.writeParcelable(imageBmp, flags);
         dest.writeString(folderName);
         dest.writeString(name);
         dest.writeByte((byte) (loaded ? 1 : 0));

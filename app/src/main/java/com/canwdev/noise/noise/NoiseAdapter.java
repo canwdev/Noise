@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.Util;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
@@ -51,15 +51,19 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
-                    && Util.getDefPref(view.getContext()).getBoolean(Conf.pEnShareView, false)) {
+            if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnShareView, false)) {
 
                 Intent intent = new Intent(mContext, DetailViewActivity.class);
                 intent.putExtra("name", noise.getName());
                 Bitmap cover = noise.getImageBmp();
                 if (cover != null) {
                     intent.putExtra("coverBmp", true);
-                    intent.putExtra("cover", cover);
+                    // 将bitmap转换成byte传输，防止大图片导致的内存溢出
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    cover.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                    byte[] bitmapByte = stream.toByteArray();
+
+                    intent.putExtra("cover", bitmapByte);
                 } else {
                     intent.putExtra("coverBmp", false);
                     intent.putExtra("cover", noise.getImageId());
@@ -68,9 +72,9 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
                 intent.putExtra("noise", noise);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mContext.startActivity(intent);
-//                    mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
-//                            ((Activity) mContext, holder.imageView_cover, "shareView").toBundle());
+//                    mContext.startActivity(intent);
+                    mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+                            ((Activity) mContext, holder.imageView_cover, "shareView").toBundle());
                 } else {
                     mContext.startActivity(intent);
                 }

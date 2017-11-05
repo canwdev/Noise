@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -52,6 +53,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 按2下返回键退出计时器
     private long doubleBackExitTime = 0;
     private SwipeRefreshLayout swipeRefresh;
+    // 构建Runnable对象，在runnable中更新界面
+    Runnable runnableUi = new Runnable() {
+        @Override
+        public void run() {
+            //更新界面
+            swipeRefresh.setRefreshing(false);
+        }
+
+    };
+    private Handler handler;
 
     // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
@@ -200,6 +211,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         initNoises();
+
+        //创建属于主线程的handler
+        handler = new Handler();
     }
 
     @Override
@@ -247,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             stopNoises();
             noiseList.clear();
             initNoises();
-            swipeRefresh.setRefreshing(false);
+            handler.post(runnableUi);
             Snackbar.make(drawer, getString(R.string.reset_soundpool) + "\n" + getString(R.string.toast_cycle_stop)
                     , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         }).start();
@@ -282,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
