@@ -6,7 +6,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 
 import com.canwdev.noise.MainActivity;
@@ -27,7 +26,7 @@ public class BackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         bgm = new Audio(this, "bgm/mind_beacon_low.mp3");
-        bgm.play();
+        bgm.playLoop();
     }
 
     @Override

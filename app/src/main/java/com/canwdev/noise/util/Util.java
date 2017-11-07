@@ -3,8 +3,8 @@ package com.canwdev.noise.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
@@ -97,6 +97,19 @@ public class Util {
             set.add(tmp);//直接加入，当有重复值时，不会往里加入，直到set的长度为52才结束
         }
         return set;
+    }
+
+    public static String[] deleteElementFromArray(String[] s, String toDelete) {
+        for (int i = 0; i < s.length; i++) {
+            if (s[i].equals(toDelete)) {
+                /*for (int j = i; j < filenames.length - 1; j++) {
+                    filenames[j] = filenames[j + 1];
+                } 可以简化成下面的语句*/
+                System.arraycopy(s, i + 1, s, i, s.length - 1 - i);
+                return Arrays.copyOf(s, s.length - 1);
+            }
+        }
+        return s;
     }
 
     private void stopTimeChooser() {

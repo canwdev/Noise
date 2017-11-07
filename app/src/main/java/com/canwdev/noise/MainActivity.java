@@ -2,9 +2,7 @@ package com.canwdev.noise;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,7 +24,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -86,6 +83,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for (String folderName : folders) {
                 noiseList.add(new Noise(this, "testres/" + folderName));
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            noiseList.add(new Noise(this,"testaudio",true));
+            noiseList.add(new Noise(this,"bgm",true));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Snackbar.make(drawer, R.string.bgm_pause
                         , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             } else {
-                bgm.play();
+                bgm.playLoop();
                 Snackbar.make(drawer, R.string.bgm_playing
                         , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             }

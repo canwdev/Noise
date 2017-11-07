@@ -3,6 +3,8 @@ package com.canwdev.noise.noise;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.IOException;
 
@@ -10,7 +12,7 @@ import java.io.IOException;
  * Created by CAN on 2017/11/1.
  */
 
-public class Audio {
+public class Audio implements Parcelable{
     private AssetFileDescriptor afd = null;
     private MediaPlayer mediaPlayer = new MediaPlayer();
 
@@ -28,6 +30,22 @@ public class Audio {
         }
     }
 
+    protected Audio(Parcel in) {
+        afd = in.readParcelable(AssetFileDescriptor.class.getClassLoader());
+    }
+
+    public static final Creator<Audio> CREATOR = new Creator<Audio>() {
+        @Override
+        public Audio createFromParcel(Parcel in) {
+            return new Audio(in);
+        }
+
+        @Override
+        public Audio[] newArray(int size) {
+            return new Audio[size];
+        }
+    };
+
     private void initMusicPlayer() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.reset();
@@ -40,10 +58,16 @@ public class Audio {
         }
     }
 
-    public void play() {
+    public void playLoop() {
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
             mediaPlayer.setOnCompletionListener(e -> mediaPlayer.start());
+        }
+    }
+
+    public void play() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
         }
     }
 
@@ -67,5 +91,15 @@ public class Audio {
 
     public boolean isPlaying() {
         return mediaPlayer.isPlaying();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(afd, flags);
     }
 }

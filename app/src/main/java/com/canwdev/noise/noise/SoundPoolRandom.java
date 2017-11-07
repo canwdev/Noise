@@ -6,7 +6,6 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.canwdev.noise.service.BackgroundService;
@@ -25,11 +24,10 @@ import java.util.TimerTask;
  * 本类原来是Noise的子类。
  * 主要负责加载SoundPool、播放、无限随机播放、停止等功能
  */
-public class SoundPoolRandom implements Serializable{
+public class SoundPoolRandom implements Serializable {
 
     private static final String TAG = "SPR##";
-    //private Noise noise;
-    private SoundPool sound = null;
+    private SoundPool sounds = null;
     private int maxSoundCount = 0;
     private String folderName;
     private Timer endlessPlayTimer = null;
@@ -37,11 +35,6 @@ public class SoundPoolRandom implements Serializable{
     private Random random = null;
     private int[] randomIdArray;
     private int randomIdArrayIndex;
-
-    public String[] getFilenames() {
-        return filenames;
-    }
-
     private String[] filenames;
 
     SoundPoolRandom(Context context, String folderName, boolean isLoadByFolder) {
@@ -53,33 +46,20 @@ public class SoundPoolRandom implements Serializable{
             // 如果是直接从文件夹加载
             if (isLoadByFolder) {
                 // 删除数组中的Conf.F_INFO
-                for (int i = 0; i < filenames.length; i++) {
-                    if (filenames[i].equals(Conf.F_INFO)) {
-                        for (int j = i; j < filenames.length - 1; j++) {
-                            filenames[j] = filenames[j + 1];
-                        }
-                        filenames = Arrays.copyOf(filenames, filenames.length - 1);
-                        break;
-                    }
-                }
+                filenames = Util.deleteElementFromArray(filenames, Conf.F_INFO);
+
                 // 删除数组中的Conf.F_COVER
-                for (int i = 0; i < filenames.length; i++) {
-                    if (filenames[i].equals(Conf.F_COVER)) {
-                        System.arraycopy(filenames, i + 1, filenames, i, filenames.length - 1 - i);
-                        filenames = Arrays.copyOf(filenames, filenames.length - 1);
-                        break;
-                    }
-                }
+                filenames = Util.deleteElementFromArray(filenames, Conf.F_COVER);
             }
             Log.d(TAG, "SoundPoolRandom: " + Arrays.toString(filenames));
             maxSoundCount = filenames.length;
             randomIdArray = new int[maxSoundCount];
-            sound = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 0);
+            sounds = new SoundPool(maxSoundCount, AudioManager.STREAM_MUSIC, 0);
 
             AssetFileDescriptor descriptor;
             for (int i = 0; i < maxSoundCount; i++) {
                 descriptor = context.getResources().getAssets().openFd(folderName + "/" + filenames[i]);
-                sound.load(descriptor, 1);
+                sounds.load(descriptor, 1);
             }
 
         } catch (IOException e) {
@@ -93,6 +73,10 @@ public class SoundPoolRandom implements Serializable{
         randomIdArray = in.createIntArray();
         randomIdArrayIndex = in.readInt();
         filenames = in.createStringArray();
+    }
+
+    public String[] getFilenames() {
+        return filenames;
     }
 
     public boolean isEndlessPlaying() {
@@ -134,15 +118,19 @@ public class SoundPoolRandom implements Serializable{
     }
 
     public void play() {
-        sound.play(randomId(), 1, 1, 1, 0, 1f);
+        sounds.play(randomId(), 1, 1, 1, 0, 1f);
     }
 
     public void playById(int id) {
-        sound.play(id, 1, 1, 1, 0, 1f);
+        sounds.play(id, 1, 1, 1, 0, 1f);
+    }
+
+    public void playByIdLoop(int id) {
+        sounds.play(id, 1, 1, 1, -1, 1f);
     }
 
     void release() {
-        sound.release();
+        sounds.release();
     }
 
     void stop() {
@@ -151,13 +139,13 @@ public class SoundPoolRandom implements Serializable{
         mContext.stopService(intent);
 
         for (int i = 1; i <= maxSoundCount; i++) {
-            sound.stop(i);
+            sounds.stop(i);
         }
     }
 
     void stop2() {
         for (int i = 1; i <= maxSoundCount; i++) {
-            sound.stop(i);
+            sounds.stop(i);
         }
     }
 

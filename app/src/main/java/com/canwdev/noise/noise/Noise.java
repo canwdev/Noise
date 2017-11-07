@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
+import com.canwdev.noise.util.Util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -40,6 +41,10 @@ public class Noise implements Parcelable {
     private int imageId;
     private Bitmap imageBmp = null;
     private SoundPoolRandom sounds;
+    // TODO: 2017/11/7 add Audio 用于播放长于7s的音乐
+    // This is audio, audio与SoundPool不可同时使用，使用audio时，SoundPool会被忽略
+    private Audio[] audios = null;
+    private String[] audioFileNames = null;
     private String folderName = "";
     private String name = "";
     private boolean loaded = false;
@@ -52,10 +57,42 @@ public class Noise implements Parcelable {
         this.name = folderName;
     }
 
-    // 新构造器，从 assets 自动加载图片与文字（2017/10/24->31）
+    // 新构造器
     public Noise(Context context, String folderName) {
         loadByFolder = true;
         this.folderName = folderName;
+        getInfoFromAssets(context, folderName);
+    }
+
+    // Audio 构造器，使用后必须再用 initAudio()
+    public Noise(Context context, String folderName, boolean isAudio) throws IOException {
+        String[] fAudios = context.getResources().getAssets().list(folderName);
+
+        fAudios = Util.deleteElementFromArray(fAudios, Conf.F_INFO);
+        fAudios = Util.deleteElementFromArray(fAudios, Conf.F_COVER);
+
+        audioFileNames = new String[fAudios.length];
+        for (int i = 0; i < fAudios.length; i++) {
+            audioFileNames[i] = folderName + "/" + fAudios[i];
+        }
+
+        getInfoFromAssets(context, folderName);
+    }
+
+    protected Noise(Parcel in) {
+        imageId = in.readInt();
+        // 大图片闪退，已使用专用方法传递
+        // imageBmp = in.readParcelable(Bitmap.class.getClassLoader());
+        audios = in.createTypedArray(Audio.CREATOR);
+        audioFileNames = in.createStringArray();
+        folderName = in.readString();
+        name = in.readString();
+        loaded = in.readByte() != 0;
+        loadByFolder = in.readByte() != 0;
+    }
+
+    // 从 assets 自动加载图片与文字（2017/10/24->31）
+    private void getInfoFromAssets(Context context, String folderName) {
         try {
             String[] filenames = context.getResources().getAssets().list(folderName);
 
@@ -102,14 +139,17 @@ public class Noise implements Parcelable {
         }
     }
 
-    protected Noise(Parcel in) {
-        imageId = in.readInt();
-        // 大图片闪退
-        // imageBmp = in.readParcelable(Bitmap.class.getClassLoader());
-        folderName = in.readString();
-        name = in.readString();
-        loaded = in.readByte() != 0;
-        loadByFolder = in.readByte() != 0;
+    // 初始化audios
+    public void initAudio(Context context) {
+        Audio[] audios = new Audio[audioFileNames.length];
+        for (int i = 0; i < audioFileNames.length; i++) {
+            audios[i] = new Audio(context, audioFileNames[i]);
+        }
+        this.audios = audios;
+    }
+
+    public boolean isAudio() {
+        return audioFileNames != null;
     }
 
     Bitmap getImageBmp() {
@@ -148,6 +188,18 @@ public class Noise implements Parcelable {
         return sounds;
     }
 
+    public Audio[] getAudios() {
+        return audios;
+    }
+
+    public Audio getAudio(int i) {
+        return audios[i];
+    }
+
+    public String[] getAudioFileNames() {
+        return audioFileNames;
+    }
+
     // 停止所有播放，
     // 一定要停止BackgroundService服务，在sounds.stop()执行
     public void stopAll() {
@@ -157,6 +209,7 @@ public class Noise implements Parcelable {
             sounds.stopEndlessPlay();
             loaded = false;
         }
+
     }
 
     public void stopAll2() {
@@ -165,6 +218,12 @@ public class Noise implements Parcelable {
             sounds.release();
             sounds.stopEndlessPlay();
             loaded = false;
+        }
+        if (isAudio()) {
+            for (Audio a : audios) {
+                a.stop();
+                a.reset();
+            }
         }
     }
 
@@ -175,8 +234,11 @@ public class Noise implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         dest.writeInt(imageId);
         // dest.writeParcelable(imageBmp, flags);
+        dest.writeTypedArray(audios, flags);
+        dest.writeStringArray(audioFileNames);
         dest.writeString(folderName);
         dest.writeString(name);
         dest.writeByte((byte) (loaded ? 1 : 0));

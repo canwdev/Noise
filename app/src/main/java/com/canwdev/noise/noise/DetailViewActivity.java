@@ -11,8 +11,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -66,7 +68,7 @@ public class DetailViewActivity extends AppCompatActivity {
             noise = intent.getParcelableExtra("noise");
             noise.setLoaded(false);
             noise.loadSoundPool(this);
-            //noise.getSounds().play();
+            //noise.getSounds().playLoop();
         }
 
 
@@ -77,19 +79,61 @@ public class DetailViewActivity extends AppCompatActivity {
             });
         }
 
-        fab_play.setOnClickListener(e -> noise.getSounds().play());
 
-        NestedListView listView = (NestedListView) findViewById(R.id.listView_sounds);
-        String[] sounds = noise.getSounds().getFilenames();
+        if (!noise.isAudio()) {
+            fab_play.setOnClickListener(e -> noise.getSounds().play());
+            NestedListView listView = (NestedListView) findViewById(R.id.listView_sounds);
+            String[] sounds = noise.getSounds().getFilenames();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, sounds);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, sounds);
 
-        listView.setAdapter(adapter);
+            listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            noise.getSounds().playById(position + 1);
-        });
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                noise.getSounds().playById(position + 1);
+            });
+
+            listView.setOnItemLongClickListener((parent, view, position, id) -> {
+                noise.getSounds().playByIdLoop(position + 1);
+                Snackbar.make(listView, R.string.toast_cycleing
+                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                return true;
+            });
+        } else {
+            fab_play.setVisibility(View.GONE);
+            noise.initAudio(this);
+            NestedListView listView = (NestedListView) findViewById(R.id.listView_sounds);
+            String[] names = noise.getAudioFileNames();
+
+            String[] finalNames = new String[names.length];
+            for (int i = 0; i < names.length; i++) {
+                finalNames[i] = names[i].substring(names[i].lastIndexOf("/")+1);
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, finalNames);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                if (noise.getAudio(position).isPlaying()) {
+                    noise.getAudio(position).pause();
+                } else {
+                    noise.getAudio(position).play();
+                }
+            });
+            listView.setOnItemLongClickListener((parent, view, position, id) -> {
+                if (noise.getAudio(position).isPlaying()) {
+                    noise.getAudio(position).pause();
+                    noise.getAudio(position).playLoop();
+                }else {
+                    noise.getAudio(position).playLoop();
+                }
+                Snackbar.make(listView, R.string.toast_cycleing
+                        , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                return true;
+            });
+        }
+
     }
 
     @Override

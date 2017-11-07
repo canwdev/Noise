@@ -50,34 +50,10 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
         holder.view.setOnClickListener(v -> {
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
-
-            if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnShareView, false)) {
-
-                Intent intent = new Intent(mContext, DetailViewActivity.class);
-                intent.putExtra("name", noise.getName());
-                Bitmap cover = noise.getImageBmp();
-                if (cover != null) {
-                    intent.putExtra("coverBmp", true);
-                    // 将bitmap转换成byte传输，防止大图片导致的内存溢出
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    cover.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-                    byte[] bitmapByte = stream.toByteArray();
-
-                    intent.putExtra("cover", bitmapByte);
-                } else {
-                    intent.putExtra("coverBmp", false);
-                    intent.putExtra("cover", noise.getImageId());
-                }
-
-                intent.putExtra("noise", noise);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mContext.startActivity(intent);
-                    mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
-                            ((Activity) mContext, holder.imageView_cover, "shareView").toBundle());
-                } else {
-                    mContext.startActivity(intent);
-                }
+            if (noise.isAudio()) {
+                goToDetail(noise, holder);
+            } else if (Util.getDefPref(view.getContext()).getBoolean(Conf.pEnShareView, false)) {
+                goToDetail(noise, holder);
             } else {
                 noise.loadSoundPool(view.getContext());
                 noise.getSounds().play();
@@ -86,35 +62,35 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
 
         // 设置长按事件
         // [主要]无尽随机播放，若需停止，使用 noise.stopAll();
-        holder.view.setOnLongClickListener(v -> {
+        holder.view.setOnLongClickListener((View v) -> {
             int position = holder.getAdapterPosition();
             Noise noise = mNoiseList.get(position);
-            noise.loadSoundPool(view.getContext());
-
-            int count = noise.getSounds().getMaxSoundCount();
-            String name = noise.getName();
-
-            if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnAdvancedInterval, false)) {
-                if (!noise.getSounds().isEndlessPlaying()) {
-                    noise.getSounds().advancedEndlessPlay();
-                    Snackbar.make(mParentView, name + " 高级间隔播放中，共 " + count + " 个文件"
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            if (!noise.isAudio()) {
+                noise.loadSoundPool(view.getContext());
+                int count = noise.getSounds().getMaxSoundCount();
+                String name = noise.getName();
+                if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnAdvancedInterval, false)) {
+                    if (!noise.getSounds().isEndlessPlaying()) {
+                        noise.getSounds().advancedEndlessPlay();
+                        Snackbar.make(mParentView, name + " 高级间隔播放中，共 " + count + " 个文件"
+                                , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    } else {
+                        Snackbar.make(mParentView, R.string.toast_adv_cycle_not_allowed
+                                , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    }
                 } else {
-                    Snackbar.make(mParentView, R.string.toast_adv_cycle_not_allowed
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                }
-            } else {
-                if (!noise.getSounds().isEndlessPlaying()) {
-                    noise.getSounds().directEndlessPlay();
-                    Snackbar.make(mParentView, name + " 循环播放中，共 " + count + " 个文件"
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                } else if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnMultiLoop, true)) {
-                    noise.getSounds().directEndlessPlay();
-                    Snackbar.make(mParentView, name + " 循环播放中，共 " + count + " 个文件"
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                } else {
-                    Snackbar.make(mParentView, R.string.toast_cycle_not_allowed
-                            , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    if (!noise.getSounds().isEndlessPlaying()) {
+                        noise.getSounds().directEndlessPlay();
+                        Snackbar.make(mParentView, name + " 循环播放中，共 " + count + " 个文件"
+                                , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    } else if (Util.getDefPref(mContext).getBoolean(Conf.pAuEnMultiLoop, true)) {
+                        noise.getSounds().directEndlessPlay();
+                        Snackbar.make(mParentView, name + " 循环播放中，共 " + count + " 个文件"
+                                , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    } else {
+                        Snackbar.make(mParentView, R.string.toast_cycle_not_allowed
+                                , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    }
                 }
             }
 
@@ -126,12 +102,41 @@ public class NoiseAdapter extends RecyclerView.Adapter<NoiseAdapter.ViewHolder> 
             holder.view.setOnTouchListener((v, event) -> {
                 int position = holder.getAdapterPosition();
                 Noise noise = mNoiseList.get(position);
-                noise.loadSoundPool(view.getContext());
-                noise.getSounds().play();
+                if (!noise.isAudio()) {
+                    noise.loadSoundPool(view.getContext());
+                    noise.getSounds().play();
+                }
                 return true;
             });
         }
         return holder;
+    }
+
+    // 启动DetailViewActivity
+    private void goToDetail(Noise noise, ViewHolder holder) {
+        Intent intent = new Intent(mContext, DetailViewActivity.class);
+        intent.putExtra("name", noise.getName());
+        Bitmap cover = noise.getImageBmp();
+        if (cover != null) {
+            intent.putExtra("coverBmp", true);
+            // 将bitmap转换成byte传输，防止大图片导致的内存溢出
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            cover.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+            byte[] bitmapByte = stream.toByteArray();
+
+            intent.putExtra("cover", bitmapByte);
+        } else {
+            intent.putExtra("coverBmp", false);
+            intent.putExtra("cover", noise.getImageId());
+        }
+        intent.putExtra("noise", noise);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+                    ((Activity) mContext, holder.imageView_cover, "shareView").toBundle());
+        } else {
+            mContext.startActivity(intent);
+        }
     }
 
     /**

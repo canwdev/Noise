@@ -36,6 +36,7 @@
     <string name="activity_stop_timer">定时停止播放</string>
     <string name="toast_press_again_to_exit">当前有播放任务，再按一次确认退出</string>
     <string name="toast_cycle_stop">循环播放停止</string>
+    <string name="toast_cycleing">循环播放</string>
     <string name="toast_invalid_time">时间无效</string>
     <string name="professional">专业版</string>
     <string name="settings_detail_view_summary">点击条目显示详细信息</string>
