@@ -6,18 +6,35 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 
 import com.canwdev.noise.MainActivity;
 import com.canwdev.noise.R;
+import com.canwdev.noise.noise.Audio;
 
 import java.text.ParseException;
 
 public class BackgroundService extends Service {
+    private Audio bgm;
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        bgm = new Audio(this, "bgm/mind_beacon_low.mp3");
+        bgm.play();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bgm.stop();
+        bgm.reset();
     }
 
     @Override

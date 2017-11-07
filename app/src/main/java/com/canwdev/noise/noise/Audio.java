@@ -55,8 +55,13 @@ public class Audio {
 
     public void stop() {
         if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+        }
+    }
+
+    public void reset() {
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.reset();
-            initMusicPlayer();
         }
     }
 
