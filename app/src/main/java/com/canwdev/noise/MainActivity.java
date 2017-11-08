@@ -42,7 +42,6 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: 2017/11/8 模拟AirHorn的TroubleMaker功能
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final int INTENT_STOP_TIME = 1;
     private static final String TAG = "Main##";
@@ -60,10 +59,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void run() {
             //更新界面
             swipeRefresh.setRefreshing(false);
+            adapter.notifyDataSetChanged();
         }
 
     };
     private Handler handler;
+    private NoiseAdapter adapter;
 
     // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
@@ -87,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         try {
             noiseList.add(new Noise(this, "testaudio", true));
             noiseList.add(new Noise(this, "bgm", true));
@@ -200,7 +200,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
         recyclerView.setLayoutManager(layoutManager);
-        NoiseAdapter adapter = new NoiseAdapter(this, noiseList);
+        adapter = new NoiseAdapter(this, noiseList);
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
 
         // 下拉重置SoundPool

@@ -4,7 +4,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="@dimen/def_padding_small">
 
 
+    <TextView
+        android:id="@+id/intro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_trouble_maker_intro" />
+
+    <TextView
+        android:id="@+id/status_dB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/def_margin"
+        android:gravity="center"
+        android:text="0 dB"
+        android:textSize="36sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView_sensitivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="1000dB" />
+
+        <SeekBar
+            android:id="@+id/seekBar_sensitivity"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:max="11"
+            android:progress="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/def_margin"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_chooseNoiseSet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose noise set" />
+
+        <TextView
+            android:id="@+id/status_playing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="-"
+            android:textSize="36sp" />
+    </LinearLayout>
 </LinearLayout>
