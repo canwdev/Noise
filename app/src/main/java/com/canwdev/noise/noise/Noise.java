@@ -41,7 +41,6 @@ public class Noise implements Parcelable {
     private int imageId;
     private Bitmap imageBmp = null;
     private SoundPoolRandom sounds;
-    // TODO: 2017/11/7 add Audio 用于播放长于7s的音乐
     // This is audio, audio与SoundPool不可同时使用，使用audio时，SoundPool会被忽略
     private Audio[] audios = null;
     private String[] audioFileNames = null;

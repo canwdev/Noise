@@ -23,12 +23,12 @@
     <string name="settings_drawer_sound">Drawer sounds</string>
     <string name="settings_touch_sound">Play sounds while touch an item</string>
     <string name="settings_touch_sound_summary">Touch event</string>
-    <string name="settings_cycle">Repeat (Long press the item to loop, use milliseconds)</string>
+    <string name="settings_cycle">Repeat - Long press the item to loop</string>
     <string name="settings_allow_cycle">Allow repeat in fixed intervals</string>
-    <string name="settings_interval">Fixed interval time</string>
-    <string name="settings_advanced_interval">Advanced interval (millisecond)</string>
-    <string name="settings_advi_short">Advanced interval: short</string>
-    <string name="settings_advi_long">Advanced interval: long</string>
+    <string name="settings_interval">Fixed interval time - millisecond</string>
+    <string name="settings_advanced_interval">Advanced interval</string>
+    <string name="settings_advi_short">Advanced interval: short - second</string>
+    <string name="settings_advi_long">Advanced interval: long - minute</string>
     <string name="reset_soundpool">Reset SoundPool</string>
     <string name="force_close">Force stop</string>
     <string name="random">Random</string>
@@ -43,4 +43,6 @@
     <string name="activity_detail_view">Detail View</string>
     <string name="settings_detail_view_summary">Click to show details</string>
     <string name="restart_app">Restart app</string>
+    <string name="settings_advi_times">Advanced interval: maxCount</string>
+    <string name="settings_advi_times_summary">Random play count from 1 to maxCount</string>
 </resources>

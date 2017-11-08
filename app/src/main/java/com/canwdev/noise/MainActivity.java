@@ -42,6 +42,7 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// TODO: 2017/11/8 模拟AirHorn的TroubleMaker功能
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final int INTENT_STOP_TIME = 1;
     private static final String TAG = "Main##";
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         try {
-            noiseList.add(new Noise(this,"testaudio",true));
-            noiseList.add(new Noise(this,"bgm",true));
+            noiseList.add(new Noise(this, "testaudio", true));
+            noiseList.add(new Noise(this, "bgm", true));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -230,31 +231,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent();
 
         switch (item.getItemId()) {
-
+            case R.id.nav_troubleMaker:
+                intent.setClass(this, TroubleMakerActivity.class);
+                startActivity(intent);
+                break;
             case R.id.nav_settings:
                 intent.setClass(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
-
             case R.id.nav_reset:
                 resetSoundPool();
                 break;
-
             case R.id.nav_fc:
                 // 强行停止
                 stopNoises();
                 System.exit(0);
                 break;
-
             case R.id.nav_about:
                 intent.setClass(this, AboutActivity.class);
                 startActivity(intent);
                 break;
-
             default:
                 break;
         }
-
         return true;
     }
 
@@ -324,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Random random = new Random();
                             Noise noise = noiseList.get(random.nextInt(noiseList.size()));
                             noise.loadSoundPool(MainActivity.this);
-                            if (noise.isLoaded()) {
+                            if (!noise.isAudio() && noise.isLoaded()) {
                                 noise.getSounds().play();
                             }
                             Thread.sleep(interval);
@@ -367,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     boolean autoExit = data.getBooleanExtra("autoExit", true);
 
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                    // 若不设置TimeZone，则会多出8小时（中国+8区）
+                    // 若不设置TimeZone，（中国+8区）则会多出8小时
                     sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
                     String hms = sdf.format(millisecond);
 

@@ -171,14 +171,23 @@ public class SoundPoolRandom implements Serializable {
     void advancedEndlessPlay() {
         startService();
 
-        long intervalShort = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAdvancedIntervalShort, "2000"));
-        long intervalLong = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAdvancedIntervalLong, "20000"));
+        // 最大重复次数
+        int tempCount = Integer.parseInt(Util.getDefPref(mContext).getString(Conf.pAdvancedIntervalTimes, "5")) - 1;
+        int maxCount;
+        if (tempCount < 2) maxCount = 2;
+        else maxCount = tempCount;
+        // 秒
+        double tempShort = Double.parseDouble(Util.getDefPref(mContext).getString(Conf.pAdvancedIntervalShort, "2"));
+        long intervalShort = (long) (tempShort * 1000);
+        // 分钟
+        double tempLong = Double.parseDouble(Util.getDefPref(mContext).getString(Conf.pAdvancedIntervalLong, "1.25"));
+        long intervalLong = (long) (tempLong * 1000 * 60);
 
         endlessPlayTimer = new Timer();
         endlessPlayTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                int times = (new Random().nextInt(4)) + 1;
+                int times = (new Random().nextInt(maxCount)) + 1;
 
                 new Thread(() -> {
                     for (int i = 0; i < times; i++) {

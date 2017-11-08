@@ -4,7 +4,7 @@
     <PreferenceCategory android:title="@string/settings_switch">
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="switch_enable_drawer_ssound"
             android:summary="@string/settings_ra2sound"
             android:title="@string/settings_drawer_sound" />
@@ -26,6 +26,7 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="check_box_enable_multiLoop"
+            android:summaryOff="@android:string/httpErrorUnsupportedScheme"
             android:summaryOn="禁忌 · 多重存在"
             android:title="@string/settings_allow_cycle" />
         <EditTextPreference
@@ -45,7 +46,20 @@
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="2000"
+            android:defaultValue="5"
+            android:dependency="check_box_enable_advancedInterval"
+            android:dialogIcon="@drawable/ic_timer_white_24dp"
+            android:inputType="numberDecimal"
+            android:key="advancedInterval_times"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/settings_advi_times_summary"
+            android:title="@string/settings_advi_times" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="2"
             android:dependency="check_box_enable_advancedInterval"
             android:dialogIcon="@drawable/ic_timer_white_24dp"
             android:inputType="numberDecimal"
@@ -57,7 +71,7 @@
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="61500"
+            android:defaultValue="1.25"
             android:dependency="check_box_enable_advancedInterval"
             android:dialogIcon="@drawable/ic_timer_white_24dp"
             android:inputType="numberDecimal"

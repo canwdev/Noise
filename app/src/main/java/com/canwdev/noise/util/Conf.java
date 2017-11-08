@@ -14,6 +14,7 @@ public class Conf {
     public static final String pAuPlInterval = "audio_play_interval";
 
     public static final String pAuEnAdvancedInterval = "check_box_enable_advancedInterval";
+    public static final String pAdvancedIntervalTimes = "advancedInterval_times";
     public static final String pAdvancedIntervalShort = "advancedInterval_short";
     public static final String pAdvancedIntervalLong = "advancedInterval_long";
 
