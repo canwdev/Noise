@@ -18,6 +18,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts"/>
         </activity>
         <activity
             android:name=".AboutActivity"
@@ -43,10 +44,17 @@
             android:exported="true" />
 
         <activity android:name=".RestartActivity" />
+
         <activity
             android:name=".TroubleMakerActivity"
             android:label="@string/activity_trouble_maker"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:icon="@mipmap/ic_launcher_trouble_maker"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

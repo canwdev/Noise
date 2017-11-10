@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/def_margin"
         android:gravity="center"
-        android:text="0 dB"
+        android:text="-"
         android:textSize="36sp" />
 
     <LinearLayout
@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="1000dB" />
+            android:text="-" />
 
         <SeekBar
             android:id="@+id/seekBar_sensitivity"
@@ -57,14 +57,15 @@
             android:id="@+id/button_chooseNoiseSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Choose noise set" />
+            android:text="@string/choose_noise_set" />
 
         <TextView
             android:id="@+id/status_playing"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="-"
-            android:textSize="36sp" />
+            android:textSize="36sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

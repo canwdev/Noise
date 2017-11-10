@@ -1,19 +1,15 @@
 package com.canwdev.noise;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import com.canwdev.noise.util.BaseActivity;
 
-public class SetTimeActivity extends AppCompatActivity {
+public class SetTimeActivity extends BaseActivity {
 
     private static final String TAG = "STA##";
     private EditText editText_hour;

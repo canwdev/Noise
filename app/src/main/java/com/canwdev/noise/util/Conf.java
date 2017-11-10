@@ -21,4 +21,8 @@ public class Conf {
     // 文件名称
     public static final String F_COVER = "_cover.jpg";
     public static final String F_INFO = "_info";
+
+    // Trouble Maker
+    public static final String noiseListId = "trouble_maker_noiseListId";
+    public static final String sensitivityLevel = "trouble_maker_sensitivityLevel";
 }

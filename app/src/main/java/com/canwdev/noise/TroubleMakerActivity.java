@@ -1,16 +1,17 @@
 package com.canwdev.noise;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -18,18 +19,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.canwdev.noise.noise.Noise;
+import com.canwdev.noise.util.ActivityCollector;
+import com.canwdev.noise.util.BaseActivity;
+import com.canwdev.noise.util.Conf;
+import com.canwdev.noise.util.Util;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TroubleMakerActivity extends AppCompatActivity {
+public class TroubleMakerActivity extends BaseActivity {
 
     static final private double EMA_FILTER = 0.6;
+    static final private long INTERVAL_RECORD = 200;
+    static final private long INTERVAL_DELAY = 5000;
+    private static final int INTENT_STOP_TIME = 1;
     private static double mEMA = 0.0;
-    private final Handler mHandler = new Handler();
     private String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
     // 控件
     private TextView textView_status_dB;
@@ -43,7 +52,6 @@ public class TroubleMakerActivity extends AppCompatActivity {
     private long[] sensitivity = {50, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 9999999};
     private int sensitivityLevel = 1;
     private List<Noise> noiseList = new ArrayList<>();
-    private final Runnable updater = () -> updateTv();
     private int noiseListId = 0;
 
     private void initNoises() {
@@ -68,7 +76,7 @@ public class TroubleMakerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        noiseList.get(noiseListId).loadSoundPool(this);
+        noiseList.get(noiseListId).loadSoundPoolSilent(this);
     }
 
     @Override
@@ -92,7 +100,14 @@ public class TroubleMakerActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 sensitivityLevel = progress;
-                textView_sensitivity.setText(sensitivity[sensitivityLevel] + " dB");
+                if (!(sensitivityLevel == sensitivity.length - 1)) {
+                    textView_sensitivity.setText(sensitivity[sensitivityLevel] + "");
+                    Util.getDefPref(TroubleMakerActivity.this).edit()
+                            .putInt(Conf.sensitivityLevel, progress).apply();
+                } else {
+                    textView_sensitivity.setText("MAX");
+
+                }
             }
 
             @Override
@@ -106,48 +121,83 @@ public class TroubleMakerActivity extends AppCompatActivity {
             }
         });
 
+        noiseListId = Util.getDefPref(this).getInt(Conf.noiseListId, 0);
+        setSensitivity(Util.getDefPref(this).getInt(Conf.sensitivityLevel, 1), true);
         initNoises();
+
+        button_chooseNoiseSet.setOnClickListener(v -> {
+            String[] noiseNames = new String[noiseList.size()];
+
+            for (int i = 0; i < noiseList.size(); i++) {
+                noiseNames[i] = noiseList.get(i).getName();
+            }
+
+            int itemSelected = noiseListId;
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.choose_noise_set))
+                    .setSingleChoiceItems(noiseNames, itemSelected, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            noiseList.get(i).loadSoundPoolSilent(TroubleMakerActivity.this);
+                            noiseListId = i;
+                            noiseList.get(i).getSounds().play();
+                            Util.getDefPref(TroubleMakerActivity.this).edit()
+                                    .putInt(Conf.noiseListId, noiseListId).apply();
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        });
     }
 
     public void updateTv() {
         double dB = getAmplitudeEMA();
 
-        String show = String.format("%.0f dB", dB);
+        String show = String.format("%.0f", dB);
         textView_status_dB.setText(show);
-        // TODO: 2017/11/8 写注释,加功能
-        if (dB > sensitivity[sensitivityLevel]) {
-            textView_status_playing.setText("WARNING");
-            textView_status_playing.setTextColor(Color.RED);
+        // TODO: 2017/11/8 写注释
 
-            noiseList.get(noiseListId).getSounds().play();
+        long dBLong = (long) dB;
+        if (dBLong > sensitivity[sensitivityLevel]) {
+            setSensitivity(sensitivity.length - 1, false);
 
-            int temp = sensitivityLevel;
-            setSensitivity(11);
-            seekBar_sensitivity.setEnabled(false);
+            if (!seekBar_sensitivity.isEnabled())
+                noiseList.get(noiseListId).getSounds().play();
+
 
             Timer stopTimer = new Timer();
             stopTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     runOnUiThread(() -> {
-                        setSensitivity(temp);
-                        seekBar_sensitivity.setEnabled(true);
+                        setSensitivity(Util.getDefPref(TroubleMakerActivity.this).getInt(Conf.sensitivityLevel, 1), true);
                     });
                 }
-            }, 7000); //delay 后启动一次
+            }, INTERVAL_DELAY); //delay 后启动一次
         } else {
-            textView_status_playing.setText("OK");
-            textView_status_playing.setTextColor(Color.GREEN);
+            if (seekBar_sensitivity.isEnabled()) {
+                textView_status_playing.setText("OK");
+                textView_status_playing.setTextColor(Color.GREEN);
+            } else {
+                textView_status_playing.setText("WARNING");
+                textView_status_playing.setTextColor(Color.RED);
+            }
         }
     }
 
-    private void setSensitivity(int i) {
+    private void setSensitivity(int i, boolean enableSeekBar) {
         sensitivityLevel = i;
-        textView_sensitivity.setText(sensitivity[sensitivityLevel] + " dB");
+        textView_sensitivity.setText(sensitivity[sensitivityLevel] + "");
         seekBar_sensitivity.setProgress(i);
+        seekBar_sensitivity.setEnabled(enableSeekBar);
+        if (enableSeekBar) {
+            Util.getDefPref(TroubleMakerActivity.this).edit()
+                    .putInt(Conf.sensitivityLevel, sensitivityLevel).apply();
+        }
     }
 
-
+    @Override
     public void onResume() {
         super.onResume();
         if (ContextCompat.checkSelfPermission(
@@ -161,9 +211,13 @@ public class TroubleMakerActivity extends AppCompatActivity {
         }
     }
 
-    public void onPause() {
-        super.onPause();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         stopRecorder();
+        for (Noise n : noiseList) {
+            n.stopAll();
+        }
     }
 
     public void startRecorder() {
@@ -201,12 +255,14 @@ public class TroubleMakerActivity extends AppCompatActivity {
                 public void run() {
                     while (runner != null) {
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(INTERVAL_RECORD);
                             //Log.i("Noise", "Tock");
                         } catch (InterruptedException e) {
                         }
+                        runOnUiThread(() -> {
+                            updateTv();
+                        });
 
-                        mHandler.post(updater);
                     }
                 }
             };
@@ -259,12 +315,63 @@ public class TroubleMakerActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tm_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            finish();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.menu_stop:
+                setSensitivity(sensitivity.length - 1, true);
+                break;
+            case R.id.menu_stop_timer:
+                // 定时停止播放
+                Intent intent = new Intent(TroubleMakerActivity.this, SetTimeActivity.class);
+                startActivityForResult(intent, INTENT_STOP_TIME);
+                break;
+            default:
+                break;
+
         }
-        return super.onOptionsItemSelected(item);
+        return true;
+    }
+
+    // 获取时间选择Activity的结果
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case INTENT_STOP_TIME:
+                if (resultCode == RESULT_OK) {
+                    long millisecond = data.getLongExtra("millisecond", -1);
+                    boolean autoExit = data.getBooleanExtra("autoExit", true);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+                    String hms = sdf.format(millisecond);
+
+                    if (millisecond > 0) {
+                        Toast.makeText(TroubleMakerActivity.this, "将在 " + hms + " 后停止", Toast.LENGTH_LONG).show();
+                        Timer stopTimer = new Timer();
+                        stopTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                finish();
+                                if (autoExit) {
+                                    ActivityCollector.finishAll(TroubleMakerActivity.this);
+                                }
+                            }
+                        }, millisecond); //millisecond 后启动一次
+                    } else {
+                        Toast.makeText(TroubleMakerActivity.this, R.string.toast_invalid_time, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default:
+        }
     }
 }

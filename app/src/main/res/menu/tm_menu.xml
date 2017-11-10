@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_stop"
+        android:icon="@drawable/ic_stop_white_24dp"
+        android:title="Stop"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_stop_timer"
+        android:icon="@drawable/ic_timer_white_24dp"
+        android:title="@string/stop_timer"
+        app:showAsAction="always" />
+</menu>

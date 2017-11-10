@@ -46,4 +46,6 @@
     <string name="settings_advi_times">Advanced interval: maxCount</string>
     <string name="settings_advi_times_summary">Random play count from 1 to maxCount</string>
     <string name="activity_trouble_maker_intro">This mode detects any sounds, then blasts random noise when it hears anything according to sensitivity. This ensures you are the master of the room at all times! (Does not work well on all device yet)</string>
+    <string name="activity_trouble_maker">Trouble Maker</string>
+    <string name="toast_cycleing">Cycling</string>
 </resources>

@@ -15,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +29,8 @@ import android.widget.Toast;
 import com.canwdev.noise.noise.Audio;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.noise.NoiseAdapter;
+import com.canwdev.noise.util.ActivityCollector;
+import com.canwdev.noise.util.BaseActivity;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
 
@@ -42,7 +43,7 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final int INTENT_STOP_TIME = 1;
     private static final String TAG = "Main##";
     SharedPreferences pref;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 按2下返回键退出计时器
     private long doubleBackExitTime = 0;
     private SwipeRefreshLayout swipeRefresh;
+    private Handler handler;
+    private NoiseAdapter adapter;
     // 构建Runnable对象，在runnable中更新界面
     Runnable runnableUi = new Runnable() {
         @Override
@@ -63,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     };
-    private Handler handler;
-    private NoiseAdapter adapter;
 
     // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
@@ -233,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.nav_troubleMaker:
+                stopNoises();
                 intent.setClass(this, TroubleMakerActivity.class);
                 startActivity(intent);
                 break;
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_fc:
                 // 强行停止
                 stopNoises();
-                System.exit(0);
+                ActivityCollector.finishAll(this);
                 break;
             case R.id.nav_about:
                 intent.setClass(this, AboutActivity.class);
@@ -383,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 Looper.prepare();
                                 if (autoExit) {
                                     stopNoises();
-                                    System.exit(0);
+                                    ActivityCollector.finishAll(MainActivity.this);
                                 }
                                 Looper.loop();
 

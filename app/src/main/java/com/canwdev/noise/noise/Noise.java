@@ -175,6 +175,13 @@ public class Noise implements Parcelable {
         }
     }
 
+    public void loadSoundPoolSilent(Context context) {
+        if (!loaded) {
+            sounds = new SoundPoolRandom(context, folderName, loadByFolder);
+            loaded = true;
+        }
+    }
+
     int getImageId() {
         return imageId;
     }

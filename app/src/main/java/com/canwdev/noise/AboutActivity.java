@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,7 +12,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class AboutActivity extends AppCompatActivity {
+import com.canwdev.noise.util.BaseActivity;
+
+public class AboutActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
