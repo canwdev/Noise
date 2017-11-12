@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="声控模式设置">
+
+        <EditTextPreference
+            android:defaultValue="6500"
+            android:key="tm_interval_delay"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/tm_interval_delay" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="tm_enable_db_mode"
+            android:summaryOff="double getAmplitudeEMA()"
+            android:summaryOn="double powerDb(double referenceAmp)"
+            android:title="@string/tm_enable_db_mode" />
+        <EditTextPreference
+            android:defaultValue="200"
+            android:dependency="tm_enable_db_mode"
+            android:key="tm_max_db"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/tm_max_db" />
+        <EditTextPreference
+            android:defaultValue="0.00911881965"
+            android:dependency="tm_enable_db_mode"
+            android:key="tm_reference_amp"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/tm_reference_amp" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

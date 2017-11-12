@@ -46,6 +46,10 @@
     <string name="settings_advi_times">高级间隔：最大重复次数</string>
     <string name="settings_advi_times_summary">随机播放1~最大次数次</string>
     <string name="activity_trouble_maker">声控模式</string>
-    <string name="activity_trouble_maker_intro">此模式检测任何声音，然后根据灵敏度听到任何声音时会发出随机噪声。 这确保您始终是房间的主人！ （在某些设备上可能不能正常工作）</string>
-    <string name="choose_noise_set">Choose noise set</string>
+    <string name="activity_trouble_maker_intro">此模式检测任何声音，然后根据灵敏度超限时会发出随机噪声。 这确保你始终是房间的主人！</string>
+    <string name="choose_noise_set">选择噪音组</string>
+    <string name="tm_interval_delay">发声间隔 - INTERVAL_DELAY</string>
+    <string name="tm_enable_db_mode">分贝模式</string>
+    <string name="tm_max_db">灵敏度阈值 - MAX_DB</string>
+    <string name="tm_reference_amp">矫正 - referenceAmp</string>
 </resources>

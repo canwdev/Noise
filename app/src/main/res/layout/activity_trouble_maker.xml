@@ -8,24 +8,33 @@
     android:padding="@dimen/def_padding_small">
 
 
-    <TextView
-        android:id="@+id/intro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/activity_trouble_maker_intro" />
-
-    <TextView
-        android:id="@+id/status_dB"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/def_margin"
-        android:gravity="center"
-        android:text="-"
-        android:textSize="36sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_trouble_maker_intro" />
+
+        <TextView
+            android:id="@+id/status_dB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:text="83"
+            android:textSize="36sp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/def_margin"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -34,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="-" />
+            android:text="101" />
 
         <SeekBar
             android:id="@+id/seekBar_sensitivity"
@@ -42,19 +51,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
-            android:max="11"
-            android:progress="1" />
+            android:max="21"
+            android:progress="5" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/def_margin"
+        android:layout_margin="@dimen/def_margin_small"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/button_chooseNoiseSet"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/choose_noise_set" />
@@ -64,8 +74,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="-"
-            android:textSize="36sp"
+            android:text="OK"
+            android:textSize="64sp"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

@@ -25,4 +25,10 @@ public class Conf {
     // Trouble Maker
     public static final String noiseListId = "trouble_maker_noiseListId";
     public static final String sensitivityLevel = "trouble_maker_sensitivityLevel";
+
+    // TroubleMakerSettings
+    public static final String pTmMaxDb = "tm_max_db";
+    public static final String pTmIntervalDelay = "tm_interval_delay";
+    public static final String pTmEnDbMode = "tm_enable_db_mode";
+    public static final String pTmEnReferenceAmp = "tm_reference_amp";
 }

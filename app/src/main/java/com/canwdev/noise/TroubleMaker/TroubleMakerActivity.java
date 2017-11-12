@@ -1,4 +1,4 @@
-package com.canwdev.noise;
+package com.canwdev.noise.TroubleMaker;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -18,6 +18,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.canwdev.noise.R;
+import com.canwdev.noise.SetTimeActivity;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.util.ActivityCollector;
 import com.canwdev.noise.util.BaseActivity;
@@ -36,12 +38,13 @@ public class TroubleMakerActivity extends BaseActivity {
 
     static final private double EMA_FILTER = 0.6;
     static final private long INTERVAL_RECORD = 200;
-    static final private long INTERVAL_DELAY = 5000;
+    static private long INTERVAL_DELAY = 6500;
     private static final int INTENT_STOP_TIME = 1;
     private static double mEMA = 0.0;
+    private final int seekBarMax = 21 + 1;
     private String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
     // 控件
-    private TextView textView_status_dB;
+    // private TextView textView_status_dB;
     private TextView textView_sensitivity;
     private SeekBar seekBar_sensitivity;
     private Button button_chooseNoiseSet;
@@ -49,10 +52,13 @@ public class TroubleMakerActivity extends BaseActivity {
     // dB
     private MediaRecorder mRecorder;
     private Thread runner;
-    private long[] sensitivity = {50, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 9999999};
+    private long[] sensitivity = new long[seekBarMax];
     private int sensitivityLevel = 1;
     private List<Noise> noiseList = new ArrayList<>();
     private int noiseListId = 0;
+    private Timer mDelayTimer;
+    private boolean PREFERENCE_ENABLE_DB_MODE;
+    private double PREFERENCE_REFERENCE_AMP;
 
     private void initNoises() {
         noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
@@ -90,7 +96,7 @@ public class TroubleMakerActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        textView_status_dB = (TextView) findViewById(R.id.status_dB);
+        // textView_status_dB = (TextView) findViewById(R.id.status_dB);
         textView_sensitivity = (TextView) findViewById(R.id.textView_sensitivity);
         seekBar_sensitivity = (SeekBar) findViewById(R.id.seekBar_sensitivity);
         button_chooseNoiseSet = (Button) findViewById(R.id.button_chooseNoiseSet);
@@ -106,7 +112,6 @@ public class TroubleMakerActivity extends BaseActivity {
                             .putInt(Conf.sensitivityLevel, progress).apply();
                 } else {
                     textView_sensitivity.setText("MAX");
-
                 }
             }
 
@@ -151,23 +156,32 @@ public class TroubleMakerActivity extends BaseActivity {
         });
     }
 
-    public void updateTv() {
-        double dB = getAmplitudeEMA();
+    public void updateUI_playNoise() {
+        double dB;
+        if (PREFERENCE_ENABLE_DB_MODE) {
+            double referenceAmp = PREFERENCE_REFERENCE_AMP;
+            dB = powerDb(referenceAmp);
+        } else {
+            dB = getAmplitudeEMA();
+        }
+
 
         String show = String.format("%.0f", dB);
-        textView_status_dB.setText(show);
+        // textView_status_dB.setText(show);
+
+
         // TODO: 2017/11/8 写注释
 
         long dBLong = (long) dB;
-        if (dBLong > sensitivity[sensitivityLevel]) {
+        if (dBLong >= sensitivity[sensitivityLevel]) {
             setSensitivity(sensitivity.length - 1, false);
 
             if (!seekBar_sensitivity.isEnabled())
                 noiseList.get(noiseListId).getSounds().play();
 
 
-            Timer stopTimer = new Timer();
-            stopTimer.schedule(new TimerTask() {
+            mDelayTimer = new Timer();
+            mDelayTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     runOnUiThread(() -> {
@@ -175,13 +189,12 @@ public class TroubleMakerActivity extends BaseActivity {
                     });
                 }
             }, INTERVAL_DELAY); //delay 后启动一次
+            textView_status_playing.setText(show);
+            textView_status_playing.setTextColor(Color.RED);
         } else {
             if (seekBar_sensitivity.isEnabled()) {
-                textView_status_playing.setText("OK");
+                textView_status_playing.setText(show);
                 textView_status_playing.setTextColor(Color.GREEN);
-            } else {
-                textView_status_playing.setText("WARNING");
-                textView_status_playing.setTextColor(Color.RED);
             }
         }
     }
@@ -191,9 +204,11 @@ public class TroubleMakerActivity extends BaseActivity {
         textView_sensitivity.setText(sensitivity[sensitivityLevel] + "");
         seekBar_sensitivity.setProgress(i);
         seekBar_sensitivity.setEnabled(enableSeekBar);
-        if (enableSeekBar) {
+        if (enableSeekBar && !(sensitivityLevel == sensitivity.length - 1)) {
             Util.getDefPref(TroubleMakerActivity.this).edit()
                     .putInt(Conf.sensitivityLevel, sensitivityLevel).apply();
+        } else if (sensitivityLevel == sensitivity.length - 1) {
+            textView_sensitivity.setText("MAX");
         }
     }
 
@@ -209,6 +224,25 @@ public class TroubleMakerActivity extends BaseActivity {
             startRecorder();
             getNoiseLevel();
         }
+
+        PREFERENCE_ENABLE_DB_MODE = Util.getDefPref(this).getBoolean(Conf.pTmEnDbMode, true);
+        PREFERENCE_REFERENCE_AMP = Double.parseDouble(Util.getDefPref(this).getString(Conf.pTmEnReferenceAmp, "0.00911881965"));
+        if (PREFERENCE_REFERENCE_AMP == 0.00911881965) {
+            PREFERENCE_REFERENCE_AMP = 10 * Math.exp(-7);
+        }
+        long avg;
+        if (PREFERENCE_ENABLE_DB_MODE) {
+            long MAX_DB = Long.parseLong(Util.getDefPref(this).getString(Conf.pTmMaxDb, "200"));
+            avg = MAX_DB / (seekBarMax - 2);
+        } else {
+            avg = 500;
+        }
+        for (int i = 0; i < sensitivity.length - 1; i++) {
+            sensitivity[i] = avg * i;
+        }
+        sensitivity[sensitivity.length - 1] = 999999999;
+        textView_sensitivity.setText(sensitivity[sensitivityLevel] + "");
+        INTERVAL_DELAY = Long.parseLong(Util.getDefPref(this).getString(Conf.pTmIntervalDelay, "6500"));
     }
 
     @Override
@@ -243,10 +277,31 @@ public class TroubleMakerActivity extends BaseActivity {
                 android.util.Log.e("[Monkey]", "SecurityException: " +
                         android.util.Log.getStackTraceString(e));
             }
-
             //mEMA = 0.0;
         }
 
+    }
+
+    public double getAmplitude() {
+        if (mRecorder != null)
+            return (mRecorder.getMaxAmplitude());
+        else
+            return 0;
+    }
+
+    // By: Patrick Mar 3 '13 at 15:07
+    // I use referenceAmp = 10exp(-7).
+    // You can try other values and compare your results to other sound level application.
+    // Therefore you select the one who work the best
+    public double powerDb(double referenceAmp) {
+        // return 20 * Math.log10(getAmplitudeEMA() / ampl);
+        return 20 * Math.log10(getAmplitude() / referenceAmp);
+    }
+
+    public double getAmplitudeEMA() {
+        double amp = getAmplitude();
+        mEMA = EMA_FILTER * amp + (1.0 - EMA_FILTER) * mEMA;
+        return mEMA;
     }
 
     private void getNoiseLevel() {
@@ -260,7 +315,7 @@ public class TroubleMakerActivity extends BaseActivity {
                         } catch (InterruptedException e) {
                         }
                         runOnUiThread(() -> {
-                            updateTv();
+                            updateUI_playNoise();
                         });
 
                     }
@@ -277,24 +332,6 @@ public class TroubleMakerActivity extends BaseActivity {
             mRecorder.release();
             mRecorder = null;
         }
-    }
-
-    public double soundDb(double ampl) {
-        return 20 * Math.log10(getAmplitudeEMA() / ampl);
-    }
-
-    public double getAmplitude() {
-        if (mRecorder != null)
-            return (mRecorder.getMaxAmplitude());
-        else
-            return 0;
-
-    }
-
-    public double getAmplitudeEMA() {
-        double amp = getAmplitude();
-        mEMA = EMA_FILTER * amp + (1.0 - EMA_FILTER) * mEMA;
-        return mEMA;
     }
 
     // requestPermissions() 回调，判断是否授予了权限
@@ -322,16 +359,25 @@ public class TroubleMakerActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
             case R.id.menu_stop:
+                if (mDelayTimer != null) {
+                    mDelayTimer.cancel();
+                    mDelayTimer.purge();
+                }
                 setSensitivity(sensitivity.length - 1, true);
                 break;
             case R.id.menu_stop_timer:
                 // 定时停止播放
-                Intent intent = new Intent(TroubleMakerActivity.this, SetTimeActivity.class);
+                intent = new Intent(TroubleMakerActivity.this, SetTimeActivity.class);
+                startActivityForResult(intent, INTENT_STOP_TIME);
+                break;
+            case R.id.menu_settings:
+                intent = new Intent(TroubleMakerActivity.this, TroubleMakerSettingsActivity.class);
                 startActivityForResult(intent, INTENT_STOP_TIME);
                 break;
             default:

@@ -89,6 +89,13 @@ public class Audio implements Parcelable{
         }
     }
 
+    public void stopAndReset() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+        }
+    }
+
     public boolean isPlaying() {
         return mediaPlayer.isPlaying();
     }

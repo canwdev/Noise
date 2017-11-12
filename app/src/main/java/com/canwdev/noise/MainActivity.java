@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.canwdev.noise.TroubleMaker.TroubleMakerActivity;
 import com.canwdev.noise.noise.Audio;
 import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.noise.NoiseAdapter;
@@ -90,7 +91,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             e.printStackTrace();
         }
         try {
-            noiseList.add(new Noise(this, "testaudio", true));
             noiseList.add(new Noise(this, "bgm", true));
         } catch (IOException e) {
             e.printStackTrace();
@@ -235,6 +235,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (item.getItemId()) {
             case R.id.nav_troubleMaker:
                 stopNoises();
+                bgm.stopAndReset();
                 intent.setClass(this, TroubleMakerActivity.class);
                 startActivity(intent);
                 break;
@@ -244,6 +245,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             case R.id.nav_reset:
                 resetSoundPool();
+                bgm.stopAndReset();
                 break;
             case R.id.nav_fc:
                 // 强行停止
@@ -290,12 +292,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             // 智能的再按一次退出
             boolean isPlaying = false;
-            for (Noise n : noiseList) {
-                if (n.isLoaded() && n.getSounds().isEndlessPlaying()) {
-                    isPlaying = true;
-                    break;
+            if (bgm.isPlaying()) {
+                isPlaying = true;
+            } else {
+                for (Noise n : noiseList) {
+                    if (n.isLoaded() && n.getSounds().isEndlessPlaying()) {
+                        isPlaying = true;
+                        break;
+                    }
                 }
             }
+
             if (isPlaying && (System.currentTimeMillis() - doubleBackExitTime) > 2000) {
                 Snackbar.make(drawer, R.string.toast_press_again_to_exit
                         , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
@@ -357,6 +364,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onDestroy() {
         super.onDestroy();
         stopNoises();
+        bgm.stopAndReset();
     }
 
     // 获取时间选择Activity的结果

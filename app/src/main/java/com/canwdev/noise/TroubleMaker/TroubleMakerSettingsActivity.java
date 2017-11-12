@@ -1,4 +1,4 @@
-package com.canwdev.noise;
+package com.canwdev.noise.TroubleMaker;
 
 import android.os.Bundle;
 import android.preference.Preference;
@@ -6,9 +6,11 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import com.canwdev.noise.AppCompatPreferenceActivity;
+import com.canwdev.noise.R;
 import com.canwdev.noise.util.Conf;
 
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class TroubleMakerSettingsActivity extends AppCompatPreferenceActivity {
 
     /**
      * A preference value change listener that updates the preference's summary to reflect its new value.
@@ -45,12 +47,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        addPreferencesFromResource(R.xml.preferences_settings);
+        addPreferencesFromResource(R.xml.tm_preferences_settings);
 
-        bindPreferenceSummaryToValue(findPreference(Conf.pAuPlInterval));
-
-        bindPreferenceSummaryToValue(findPreference(Conf.pAdvancedIntervalShort));
-        bindPreferenceSummaryToValue(findPreference(Conf.pAdvancedIntervalLong));
+        bindPreferenceSummaryToValue(findPreference(Conf.pTmMaxDb));
+        bindPreferenceSummaryToValue(findPreference(Conf.pTmIntervalDelay));
+        bindPreferenceSummaryToValue(findPreference(Conf.pTmEnReferenceAmp));
     }
 
     @Override

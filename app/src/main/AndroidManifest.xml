@@ -25,6 +25,10 @@
             android:label="@string/activity_about"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".TroubleMaker.TroubleMakerSettingsActivity"
+            android:label="@string/activity_settings"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/activity_settings"
             android:theme="@style/AppTheme" />
@@ -46,7 +50,7 @@
         <activity android:name=".RestartActivity" />
 
         <activity
-            android:name=".TroubleMakerActivity"
+            android:name=".TroubleMaker.TroubleMakerActivity"
             android:label="@string/activity_trouble_maker"
             android:theme="@style/AppTheme"
             android:icon="@mipmap/ic_launcher_trouble_maker"
