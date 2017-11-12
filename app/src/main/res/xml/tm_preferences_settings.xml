@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="声控模式设置">
+    <PreferenceCategory android:title="@string/activity_trouble_maker">
 
         <EditTextPreference
             android:defaultValue="6500"

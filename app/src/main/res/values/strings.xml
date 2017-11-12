@@ -40,7 +40,6 @@
     <string name="toast_invalid_time">时间无效</string>
     <string name="professional">专业版</string>
     <string name="settings_detail_view_summary">点击条目显示详细信息</string>
-    <string name="settings_detail_view">详细信息</string>
     <string name="activity_detail_view">详细信息</string>
     <string name="restart_app">重启应用</string>
     <string name="settings_advi_times">高级间隔：最大重复次数</string>

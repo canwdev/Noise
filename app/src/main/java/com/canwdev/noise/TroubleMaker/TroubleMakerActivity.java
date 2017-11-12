@@ -127,7 +127,7 @@ public class TroubleMakerActivity extends BaseActivity {
         });
 
         noiseListId = Util.getDefPref(this).getInt(Conf.noiseListId, 0);
-        setSensitivity(Util.getDefPref(this).getInt(Conf.sensitivityLevel, 1), true);
+        setSensitivityUI(Util.getDefPref(this).getInt(Conf.sensitivityLevel, 1), true);
         initNoises();
 
         button_chooseNoiseSet.setOnClickListener(v -> {
@@ -174,7 +174,7 @@ public class TroubleMakerActivity extends BaseActivity {
 
         long dBLong = (long) dB;
         if (dBLong >= sensitivity[sensitivityLevel]) {
-            setSensitivity(sensitivity.length - 1, false);
+            setSensitivityUI(sensitivity.length - 1, false);
 
             if (!seekBar_sensitivity.isEnabled())
                 noiseList.get(noiseListId).getSounds().play();
@@ -185,7 +185,7 @@ public class TroubleMakerActivity extends BaseActivity {
                 @Override
                 public void run() {
                     runOnUiThread(() -> {
-                        setSensitivity(Util.getDefPref(TroubleMakerActivity.this).getInt(Conf.sensitivityLevel, 1), true);
+                        setSensitivityUI(Util.getDefPref(TroubleMakerActivity.this).getInt(Conf.sensitivityLevel, 1), true);
                     });
                 }
             }, INTERVAL_DELAY); //delay 后启动一次
@@ -199,7 +199,7 @@ public class TroubleMakerActivity extends BaseActivity {
         }
     }
 
-    private void setSensitivity(int i, boolean enableSeekBar) {
+    private void setSensitivityUI(int i, boolean enableSeekBar) {
         sensitivityLevel = i;
         textView_sensitivity.setText(sensitivity[sensitivityLevel] + "");
         seekBar_sensitivity.setProgress(i);
@@ -241,7 +241,7 @@ public class TroubleMakerActivity extends BaseActivity {
             sensitivity[i] = avg * i;
         }
         sensitivity[sensitivity.length - 1] = 999999999;
-        textView_sensitivity.setText(sensitivity[sensitivityLevel] + "");
+        setSensitivityUI(sensitivityLevel, true);
         INTERVAL_DELAY = Long.parseLong(Util.getDefPref(this).getString(Conf.pTmIntervalDelay, "6500"));
     }
 
@@ -369,7 +369,7 @@ public class TroubleMakerActivity extends BaseActivity {
                     mDelayTimer.cancel();
                     mDelayTimer.purge();
                 }
-                setSensitivity(sensitivity.length - 1, true);
+                setSensitivityUI(sensitivity.length - 1, true);
                 break;
             case R.id.menu_stop_timer:
                 // 定时停止播放

@@ -19,7 +19,7 @@
             android:dependency="switch_enable_button_touch"
             android:key="switch_enable_detailView"
             android:summary="@string/settings_detail_view_summary"
-            android:title="@string/settings_detail_view" />
+            android:title="@string/activity_detail_view" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_cycle">
 
