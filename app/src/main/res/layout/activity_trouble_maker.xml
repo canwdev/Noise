@@ -4,78 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTintMode="multiply"
     android:orientation="vertical"
     android:padding="@dimen/def_padding_small">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/def_margin"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/intro"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/activity_trouble_maker_intro" />
-
-        <TextView
-            android:id="@+id/status_dB"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:gravity="center"
-            android:text="83"
-            android:textSize="36sp"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/def_margin"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textView_sensitivity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="101" />
-
-        <SeekBar
-            android:id="@+id/seekBar_sensitivity"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:max="21"
-            android:progress="5" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/def_margin_small"
-        android:orientation="vertical">
+        android:layout_margin="@dimen/def_padding">
 
-        <Button
-            android:id="@+id/button_chooseNoiseSet"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/choose_noise_set" />
+            android:background="@android:drawable/dialog_frame"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView_sensitivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="100"
+                android:textColor="@color/colorAccent" />
+
+            <SeekBar
+                android:id="@+id/seekBar_sensitivity"
+                style="@android:style/Widget.DeviceDefault.SeekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:max="21"
+                android:progress="10" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/status_playing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:gravity="center"
             android:text="OK"
+            android:textColor="@color/google_green"
             android:textSize="64sp"
             android:textStyle="bold" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/activity_trouble_maker_intro"
+            android:textColor="@color/grey_primary_dark" />
+    </RelativeLayout>
+
 </LinearLayout>

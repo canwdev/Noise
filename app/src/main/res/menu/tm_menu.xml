@@ -9,8 +9,10 @@
     <item
         android:id="@+id/menu_stop_timer"
         android:icon="@drawable/ic_timer_white_24dp"
-        android:title="@string/stop_timer"
-        app:showAsAction="always" />
+        android:title="@string/stop_timer" />
+    <item
+        android:id="@+id/menu_choose_noise_set"
+        android:title="@string/choose_noise_set" />
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_settings_white_24dp"

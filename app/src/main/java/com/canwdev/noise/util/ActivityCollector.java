@@ -3,7 +3,6 @@ package com.canwdev.noise.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Process;
 
 import com.canwdev.noise.service.BackgroundService;
 

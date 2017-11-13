@@ -50,10 +50,10 @@ public class Noise implements Parcelable {
     private boolean loadByFolder = false;
 
     // 早期构造器
-    public Noise(int imageId, String folderName) {
+    public Noise(int imageId, String Name, String folderName) {
         this.imageId = imageId;
         this.folderName = folderName;
-        this.name = folderName;
+        this.name = Name;
     }
 
     // 新构造器

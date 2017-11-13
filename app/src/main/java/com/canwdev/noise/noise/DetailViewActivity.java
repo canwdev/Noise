@@ -108,7 +108,7 @@ public class DetailViewActivity extends AppCompatActivity {
 
             String[] finalNames = new String[names.length];
             for (int i = 0; i < names.length; i++) {
-                finalNames[i] = names[i].substring(names[i].lastIndexOf("/")+1);
+                finalNames[i] = names[i].substring(names[i].lastIndexOf("/") + 1);
             }
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -125,7 +125,7 @@ public class DetailViewActivity extends AppCompatActivity {
                 if (noise.getAudio(position).isPlaying()) {
                     noise.getAudio(position).pause();
                     noise.getAudio(position).playLoop();
-                }else {
+                } else {
                     noise.getAudio(position).playLoop();
                 }
                 Snackbar.make(listView, R.string.toast_cycleing

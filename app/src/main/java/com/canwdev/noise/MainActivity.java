@@ -70,10 +70,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
-        noiseList.add(new Noise(R.drawable.ra_box, "ra2/audio_box"));
-        noiseList.add(new Noise(R.drawable.ra_boom, "ra2/audio_boom"));
-        noiseList.add(new Noise(R.drawable.ra_gun, "ra2/audio_gun"));
-        noiseList.add(new Noise(R.drawable.ra_allied_base, "ra2/audio_base"));
+        noiseList.add(new Noise(R.drawable.ra_box, "Box","ra2/audio_box"));
+        noiseList.add(new Noise(R.drawable.ra_boom, "Boom","ra2/audio_boom"));
+        noiseList.add(new Noise(R.drawable.ra_gun, "Guns","ra2/audio_gun"));
+        noiseList.add(new Noise(R.drawable.ra_allied_base, "Base","ra2/audio_base"));
 
         // 从指定文件夹自动查询/assets/guichu子文件夹名称，并通过重载的构造器自动加载内容
         try {
@@ -81,17 +81,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             for (String folderName : folders) {
                 noiseList.add(new Noise(this, "guichu/" + folderName));
             }
+            noiseList.add(new Noise(this, "bgm", true));
 
             // 测试用素材
             folders = getResources().getAssets().list("testres");
             for (String folderName : folders) {
                 noiseList.add(new Noise(this, "testres/" + folderName));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            noiseList.add(new Noise(this, "bgm", true));
+            noiseList.add(new Noise(this, "testbgm", true));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -191,13 +188,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         int spanCount;
 
-        /*if (screenWidthDp >= 600) {
-            spanCount = 6;
-        } else {
-            spanCount = 4;
-        }*/
         spanCount = screenWidthDp / 100;
-        if (spanCount < 4) spanCount = 4;
+        // if (spanCount < 4) spanCount = 4;
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
         recyclerView.setLayoutManager(layoutManager);
@@ -269,7 +261,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void resetSoundPool() {
         // 重置列表中的所有SoundPool
-        // TODO: 2017/11/1 Fix errors
+        // Need to fix errors
         // E/AudioTrack: AudioFlinger could not create track, status: -12
         // E/SoundPool: Error creating AudioTrack
         swipeRefresh.setRefreshing(true);

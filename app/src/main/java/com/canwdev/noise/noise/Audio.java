@@ -12,7 +12,18 @@ import java.io.IOException;
  * Created by CAN on 2017/11/1.
  */
 
-public class Audio implements Parcelable{
+public class Audio implements Parcelable {
+    public static final Creator<Audio> CREATOR = new Creator<Audio>() {
+        @Override
+        public Audio createFromParcel(Parcel in) {
+            return new Audio(in);
+        }
+
+        @Override
+        public Audio[] newArray(int size) {
+            return new Audio[size];
+        }
+    };
     private AssetFileDescriptor afd = null;
     private MediaPlayer mediaPlayer = new MediaPlayer();
 
@@ -33,18 +44,6 @@ public class Audio implements Parcelable{
     protected Audio(Parcel in) {
         afd = in.readParcelable(AssetFileDescriptor.class.getClassLoader());
     }
-
-    public static final Creator<Audio> CREATOR = new Creator<Audio>() {
-        @Override
-        public Audio createFromParcel(Parcel in) {
-            return new Audio(in);
-        }
-
-        @Override
-        public Audio[] newArray(int size) {
-            return new Audio[size];
-        }
-    };
 
     private void initMusicPlayer() {
         if (mediaPlayer.isPlaying()) {

@@ -2,13 +2,9 @@ package com.canwdev.noise;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
 
-import com.canwdev.noise.R;
-import com.canwdev.noise.noise.Noise;
 import com.canwdev.noise.service.BackgroundService;
 
 // 通过启动这个Activity再执行System.exit(0)来重启App的所有Activity
