@@ -51,4 +51,5 @@
     <string name="tm_enable_db_mode">分贝模式</string>
     <string name="tm_max_db">灵敏度阈值 - MAX_DB</string>
     <string name="tm_reference_amp">矫正 - referenceAmp</string>
+    <string name="toast_default_bgm_set">已设为默认BGM，重启应用生效</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.canwdev.noise.noise;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -16,6 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
@@ -26,6 +29,7 @@ import com.canwdev.noise.util.Util;
 
 public class DetailViewActivity extends AppCompatActivity {
     private Noise noise;
+    private Animation animCover;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -53,6 +57,7 @@ public class DetailViewActivity extends AppCompatActivity {
 
         FloatingActionButton fab_play = (FloatingActionButton) findViewById(R.id.fab_play);
         ImageView cover = (ImageView) findViewById(R.id.imageView_cover);
+        animCover = AnimationUtils.loadAnimation(this, R.anim.anim_image_zoom_click);
 
         Intent intent = getIntent();
 
@@ -66,22 +71,33 @@ public class DetailViewActivity extends AppCompatActivity {
                 cover.setImageResource(intent.getIntExtra("cover", 0));
             }
             noise = intent.getParcelableExtra("noise");
-            noise.setLoaded(false);
-            noise.loadSoundPool(this);
+            if (!noise.isAudio()) {
+                noise.setLoaded(false);
+                noise.loadSoundPool(this);
+            } else {
+                ProgressDialog progressDialog = ProgressDialog.show(this, "Loading",
+                        "Please wait...", true);
+                new Thread(() -> {
+                    noise.initAudio(DetailViewActivity.this);
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                    });
+                }).start();
+            }
             //noise.getSounds().playLoop();
         }
 
-
-        if (Util.getDefPref(this).getBoolean(Conf.pEnTouch, false)) {
-            cover.setOnTouchListener((v, event) -> {
-                noise.getSounds().play();
-                return false;
-            });
-        }
-
-
         if (!noise.isAudio()) {
-            fab_play.setOnClickListener(e -> noise.getSounds().play());
+            if (Util.getDefPref(this).getBoolean(Conf.pEnTouch, false)) {
+                cover.setOnTouchListener((v, event) -> {
+                    noise.getSounds().play();
+                    return false;
+                });
+            }
+            fab_play.setOnClickListener(e -> {
+                cover.startAnimation(animCover);
+                noise.getSounds().play();
+            });
             NestedListView listView = (NestedListView) findViewById(R.id.listView_sounds);
             String[] sounds = noise.getSounds().getFilenames();
 
@@ -102,7 +118,6 @@ public class DetailViewActivity extends AppCompatActivity {
             });
         } else {
             fab_play.setVisibility(View.GONE);
-            noise.initAudio(this);
             NestedListView listView = (NestedListView) findViewById(R.id.listView_sounds);
             String[] names = noise.getAudioFileNames();
 
@@ -118,17 +133,13 @@ public class DetailViewActivity extends AppCompatActivity {
                 if (noise.getAudio(position).isPlaying()) {
                     noise.getAudio(position).pause();
                 } else {
-                    noise.getAudio(position).play();
+                    noise.getAudio(position).playLoop();
                 }
             });
             listView.setOnItemLongClickListener((parent, view, position, id) -> {
-                if (noise.getAudio(position).isPlaying()) {
-                    noise.getAudio(position).pause();
-                    noise.getAudio(position).playLoop();
-                } else {
-                    noise.getAudio(position).playLoop();
-                }
-                Snackbar.make(listView, R.string.toast_cycleing
+                Util.getDefPref(DetailViewActivity.this).edit()
+                        .putString(Conf.defaultBGM, finalNames[position]).apply();
+                Snackbar.make(listView, R.string.toast_default_bgm_set
                         , Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 return true;
             });

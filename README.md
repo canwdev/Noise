@@ -2,7 +2,7 @@
 
 <img src="./app/src/main/ic_launcher-web.png" width="100px"/>
 
-“用怎样的节奏抵制寝室的喧闹”
+“Make noise easily...”
 
 ---
 
@@ -12,8 +12,9 @@
 
 * minSdkVersion 15
 * 本应用遵循 MaterialDesign
+* 支持循环播放、定时停止和自动检测环境噪音
 * 长时间播放噪音有风险，后果自负。
-* 部分素材来自 [GhostAnimalPlayer](https://github.com/CDFLS/GhostAnimalPlayer)
+* 一部分素材来自 [GhostAnimalPlayer](https://github.com/CDFLS/GhostAnimalPlayer)
 
 ---
 

@@ -31,4 +31,7 @@ public class Conf {
     public static final String pTmIntervalDelay = "tm_interval_delay";
     public static final String pTmEnDbMode = "tm_enable_db_mode";
     public static final String pTmEnReferenceAmp = "tm_reference_amp";
+
+    // DefaultBGM
+    public static final String defaultBGM = "default_bgm_file_name";
 }

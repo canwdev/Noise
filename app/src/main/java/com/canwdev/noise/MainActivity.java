@@ -34,6 +34,7 @@ import com.canwdev.noise.util.ActivityCollector;
 import com.canwdev.noise.util.BaseActivity;
 import com.canwdev.noise.util.Conf;
 import com.canwdev.noise.util.SoundPoolUtil;
+import com.canwdev.noise.util.Util;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -70,10 +71,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     // 初始化声音列表（此时SoundPool并未加载，将在第一次点击条目时加载）
     private void initNoises() {
-        noiseList.add(new Noise(R.drawable.ra_box, "Box","ra2/audio_box"));
-        noiseList.add(new Noise(R.drawable.ra_boom, "Boom","ra2/audio_boom"));
-        noiseList.add(new Noise(R.drawable.ra_gun, "Guns","ra2/audio_gun"));
-        noiseList.add(new Noise(R.drawable.ra_allied_base, "Base","ra2/audio_base"));
+        noiseList.add(new Noise(R.drawable.ra_box, "Box", "ra2/audio_box"));
+        noiseList.add(new Noise(R.drawable.ra_boom, "Boom", "ra2/audio_boom"));
+        noiseList.add(new Noise(R.drawable.ra_gun, "Guns", "ra2/audio_gun"));
+        noiseList.add(new Noise(R.drawable.ra_allied_base, "Base", "ra2/audio_base"));
 
         // 从指定文件夹自动查询/assets/guichu子文件夹名称，并通过重载的构造器自动加载内容
         try {
@@ -88,7 +89,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             for (String folderName : folders) {
                 noiseList.add(new Noise(this, "testres/" + folderName));
             }
-            noiseList.add(new Noise(this, "testbgm", true));
+            // noiseList.add(new Noise(this, "testbgm", true));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,8 +99,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void initAudio() {
         // 初始化抽屉基本SoundPool，音频文件在/res/raw
         spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
-
-        bgm = new Audio(this, "bgm/bgm_finally_animal_sister.mp3");
+        String defaultBgm = Util.getDefPref(this).getString(Conf.defaultBGM, "bgm_finally_animal_sister.mp3");
+        bgm = new Audio(this, "bm/" + defaultBgm);
     }
 
     private void stopNoises() {
@@ -186,9 +187,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         int screenWidthDp = (int) (displayMetrics.widthPixels / displayMetrics.density);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        int spanCount;
-
-        spanCount = screenWidthDp / 100;
+        int spanCount = screenWidthDp / 100;
         // if (spanCount < 4) spanCount = 4;
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
