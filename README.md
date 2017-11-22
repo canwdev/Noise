@@ -6,10 +6,6 @@
 
 ---
 
-<img src="./art/v1.4.jpg" width="100%" height="100%"/>
-
----
-
 * minSdkVersion 15
 * 本应用遵循 MaterialDesign
 * 支持循环播放、定时停止和自动检测环境噪音
