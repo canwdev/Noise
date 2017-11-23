@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         // 初始化抽屉基本SoundPool，音频文件在/res/raw
         spu_drawer = SoundPoolUtil.getInstance(MainActivity.this);
         String defaultBgm = Util.getDefPref(this).getString(Conf.defaultBGM, "bgm_finally_animal_sister.mp3");
-        bgm = new Audio(this, "bm/" + defaultBgm);
+        bgm = new Audio(this, "bgm/" + defaultBgm);
     }
 
     private void stopNoises() {
