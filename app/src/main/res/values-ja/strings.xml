@@ -49,4 +49,8 @@
     <string name="tm_enable_db_mode">デシベルモード</string>
     <string name="tm_max_db">感度スレッショルド - MAX_DB</string>
     <string name="tm_reference_amp">修正 - referenceAmp</string>
+    <string name="toast_default_bgm_set">BGMがデフォルトとして設定されている場合は、アプリケーションを再起動して有効にします</string>
+    <string name="hour">時</string>
+    <string name="minute">分</string>
+    <string name="second">秒</string>
 </resources>

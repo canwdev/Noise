@@ -52,4 +52,5 @@
     <string name="tm_enable_db_mode">Decibel mode</string>
     <string name="tm_max_db">Sensitivity threshold - MAX_DB</string>
     <string name="tm_reference_amp">Calibration - referenceAmp</string>
+    <string name="toast_default_bgm_set">BGM has been set as the default, restart the application to take effect</string>
 </resources>
