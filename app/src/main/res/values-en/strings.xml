@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Noise Generator!</string>
-    <string name="about_intro">Make noise easily</string>
+    <string name="about_intro">用怎样的节奏抵制寝室的喧闹</string>
     <string name="activity_about">About</string>
     <string name="about_developer">Developer: canwdev</string>
     <string name="about_info">This application follows Material Design\nWarning: Playing noise for a long time is dangerous.</string>
